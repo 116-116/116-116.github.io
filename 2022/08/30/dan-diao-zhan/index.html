@@ -5,7 +5,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="单调栈, 咳咳">
-    <meta name="description" content="stack&amp;lt;int&amp;gt; sta; //此处以单调递增栈为例 for(遍历需要入栈的数组) &amp;#123;      if( 栈空 || 栈顶元素小于入栈元素)         &amp;#123;          //更新结果;     ">
+    <meta name="description" content="stack&amp;lt;int&amp;gt; sta;
+&amp;#x2F;&amp;#x2F;此处以单调递增栈为例
+for(遍历需要入栈的数组)
+&amp;#123;
+     if( 栈空 || 栈顶元素小于入栈元素)   
+     &amp;#123;
+         &amp;#">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -388,7 +394,7 @@
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    92
+                    96
                 </div>
                 
 
@@ -418,8 +424,25 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p><code>stack&lt;int&gt; sta; //此处以单调递增栈为例 for(遍历需要入栈的数组) &#123;      if( 栈空 || 栈顶元素小于入栈元素)         &#123;          //更新结果;          入栈元素入栈;      &#125;      else       &#123;          while( 栈不为空 &amp;&amp; 栈顶元素大于等于入栈元素)          &#123;              栈顶元素出栈;              更新结果;          &#125;          入栈元素入栈;      &#125; &#125;</code></p>
-
+                <pre class="line-numbers language-none"><code class="language-none">stack&lt;int&gt; sta;
+&#x2F;&#x2F;此处以单调递增栈为例
+for(遍历需要入栈的数组)
+&#123;
+     if( 栈空 || 栈顶元素小于入栈元素)   
+     &#123;
+         &#x2F;&#x2F;更新结果;
+         入栈元素入栈;
+     &#125;
+     else 
+     &#123;
+         while( 栈不为空 &amp;&amp; 栈顶元素大于等于入栈元素)
+         &#123;
+             栈顶元素出栈;
+             更新结果;
+         &#125;
+         入栈元素入栈;
+     &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
                 
             </div>
             <hr/>
