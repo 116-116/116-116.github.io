@@ -4,11 +4,13 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="哈希, 咳咳">
-    <meta name="description" content="const int MAXN&amp;#x3D;100010,P&amp;#x3D;131,M&amp;#x3D;1e9+7;
-typedef unsigned long long ull;
-typedef long long ll;
-char s[MAXN];&amp;">
+    <meta name="keywords" content="tarjan强连通分量, 咳咳">
+    <meta name="description" content="#include &amp;lt;iostream&amp;gt;
+#include &amp;lt;algorithm&amp;gt;
+#include &amp;lt;cstring&amp;gt;
+#include &amp;lt;vector&amp;gt;
+
+using namespace s">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -22,7 +24,7 @@ char s[MAXN];&amp;">
 
     
 
-    <title>哈希 | 咳咳</title>
+    <title>tarjan强连通分量 | 咳咳</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
@@ -249,12 +251,12 @@ char s[MAXN];&amp;">
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/12.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/5.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">哈希</h1>
+                    <h1 class="description center-align post-title">tarjan强连通分量</h1>
                 </div>
             </div>
         </div>
@@ -382,7 +384,7 @@ char s[MAXN];&amp;">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-08-30
+                    2022-08-31
                 </div>
                 
 
@@ -391,14 +393,14 @@ char s[MAXN];&amp;">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    245
+                    891
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    1 分
+                    4 分
                 </div>
                 
 
@@ -421,35 +423,120 @@ char s[MAXN];&amp;">
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <pre class="line-numbers language-none"><code class="language-none">const int MAXN&#x3D;100010,P&#x3D;131,M&#x3D;1e9+7;
-typedef unsigned long long ull;
-typedef long long ll;
-char s[MAXN];&#x2F;&#x2F;已知字符串s从1开始存储
-ull Hash1[MAXN],p1[MAXN];&#x2F;&#x2F;此处用自动取模
-ll Hash2[MAXN],p2[MAXN];&#x2F;&#x2F;此处采用单Hash方法
-&#x2F;&#x2F;Hash1和Hash2共同构成双Hash方法
- 
-p1[0]&#x3D;p2[0]&#x3D;1;
-int len&#x3D;strlen(s+1);
-for(int i&#x3D;1;i&lt;&#x3D;len;i++)
-&#123;&#x2F;&#x2F;此处为了方便,字符串的字符分配值就是该字符的ascii码
-	p1[i]&#x3D;p1[i-1]*P;&#x2F;&#x2F;求P的次方
-	Hash1[i]&#x3D;Hash1[i-1]*P+s[i];&#x2F;&#x2F;利用类似前缀和的思想求Hash
-	p2[i]&#x3D;((p2[i-1]%M)*P)%M;&#x2F;&#x2F;(nm)%mod&#x3D;(n%mod * m%mod) %mod;
-	Hash2[i]&#x3D;(((Hash2[i-1]%M)*P)%M+s[i])%M;
+                <pre class="line-numbers language-none"><code class="language-none">#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+#include &lt;cstring&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+int n,m;
+
+const int MAXN&#x3D;100010,MAXM&#x3D;1000010;
+
+&#x2F;&#x2F;链式前向星(new代表缩点后的图)
+int head[MAXN],ed[MAXM],nex[MAXM],idx;
+int head_new[MAXN],ed_new[MAXM],nex_new[MAXM],idx_new;
+
+int dfn[MAXN],low[MAXN],timestamp;
+&#x2F;&#x2F;dfn[i]表示遍历到i的时间戳,timestamp时间戳计数
+&#x2F;&#x2F;low[i]表示从i开始走(遍历它的子树),所能遍历到的最小时间戳是什么(i节点当前所在强连通块的最高点)
+int stk[MAXN],in_stk[MAXN],top;&#x2F;&#x2F;stk数组实现栈,top表示栈顶位置,in_stk[i]标记i是否在栈中
+int id[MAXN],scc_cnt,scc_size[MAXN];&#x2F;&#x2F;id[i]表示编号为i节点的强连通块编号
+&#x2F;&#x2F;scc_cnt表示强连通分量的个数,scc_size[i]表示编号为i的强连通分量中点的个数
+vector&lt;int&gt; scc[MAXN];&#x2F;&#x2F;scc[i]存储编号为i的强连通分量中的点
+
+void init()&#x2F;&#x2F;初始化
+&#123;
+    idx&#x3D;idx_new&#x3D;scc_cnt&#x3D;top&#x3D;0;
+    memset(head,-1,sizeof(head));
+    memset(head_new,-1,sizeof(head_new));
 &#125;
 
-&#x2F;&#x2F;求任意字串的哈希值
-ull get_hash1(int l,int r)
+void add(int a,int b)&#x2F;&#x2F;建立原图
 &#123;
-	return Hash1[r]-Hash1[l-1]*p1[r-l+1];
+    ed[idx]&#x3D;b;
+    nex[idx]&#x3D;head[a];
+    head[a]&#x3D;idx++;
 &#125;
- 
-ll get_hash2(int l,int r)
+
+void add_new(int a,int b)&#x2F;&#x2F;建立缩点图
 &#123;
-	return ((Hash2[r]-Hash2[l-1]*p2[r-l+1])%M+M)%M;
+    ed_new[idx_new]&#x3D;b;
+    nex_new[idx_new]&#x3D;head_new[a];
+    head_new[a]&#x3D;idx_new++;
 &#125;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+void tarjan(int u)&#x2F;&#x2F;tarjan算法(采用数组栈实现)
+&#123;
+    dfn[u]&#x3D;low[u]&#x3D;++timestamp;&#x2F;&#x2F;初始化(第一次访问赋值新的时间戳)
+    stk[++top]&#x3D;u,in_stk[u]&#x3D;1;&#x2F;&#x2F;入栈操作,同时标记u在栈中
+    
+    for(int i&#x3D;head[u];i!&#x3D;-1;i&#x3D;nex[i])&#x2F;&#x2F;遍历u的所有出边
+    &#123;
+        int j&#x3D;ed[i];&#x2F;&#x2F;u的一条出边的终点
+        if(dfn[j]&#x3D;&#x3D;0)&#x2F;&#x2F;当前点没有遍历
+        &#123;
+            tarjan(j);
+             &#x2F;&#x2F;j也许存在反向边到达比u还高的层,
+             &#x2F;&#x2F;所以用j能到的最小dfn序(最高点)更新u能达到的(最小dfn序)最高点
+            low[u]&#x3D;min(low[u],low[j]);&#x2F;&#x2F;更新low[u],注意此处是low[j]
+        &#125;
+        else if(in_stk[j]&#x3D;&#x3D;1)&#x2F;&#x2F;j在栈中
+            low[u]&#x3D;min(low[u],dfn[j]);&#x2F;&#x2F;更新low[u],注意此处是dfn[j]
+    &#125;
+    &#x2F;&#x2F;回到了强连通块的最高点,那么就将这个强连通块的所有节点进行缩点
+    if(low[u]&#x3D;&#x3D;dfn[u])
+    &#123;
+        scc_cnt++;&#x2F;&#x2F;强连通分量个数+1
+        int y;
+        do&#123;
+            y&#x3D;stk[top--];&#x2F;&#x2F;出栈
+            in_stk[y]&#x3D;0;&#x2F;&#x2F;标记清0
+            id[y]&#x3D;scc_cnt;&#x2F;&#x2F;赋值当前y的强连通分量的编号
+            scc_size[scc_cnt]++;&#x2F;&#x2F;size++
+            scc[scc_cnt].push_back(y);&#x2F;&#x2F;将点放入scc[scc_cnt]
+        &#125;while(u!&#x3D;y);
+        
+    &#125;
+    
+&#125;
+
+int main()
+&#123;
+    init();
+    scanf(&quot;%d %d&quot;,&amp;n,&amp;m);
+    for(int i&#x3D;1;i&lt;&#x3D;m;i++)
+    &#123;
+        int a,b;
+        scanf(&quot;%d %d&quot;,&amp;a,&amp;b);
+        add(a,b);
+    &#125;
+    
+    for(int i&#x3D;1;i&lt;&#x3D;n;i++)
+        if(dfn[i]&#x3D;&#x3D;0)&#x2F;&#x2F;当前未搜索过
+            tarjan(i);
+    
+    cout &lt;&lt; scc_cnt &lt;&lt; endl;&#x2F;&#x2F;输出强连通分量的个数
+    
+    &#x2F;&#x2F;输出每个强连图分量的点
+    for(int i&#x3D;1;i&lt;&#x3D;scc_cnt;i++)
+    &#123;
+        for(int j&#x3D;scc[i].size()-1;j&gt;&#x3D;0;j--)
+            cout &lt;&lt; scc[i][j] &lt;&lt; &quot; &quot;;
+        cout &lt;&lt; endl;
+    &#125;
+    &#x2F;&#x2F;缩点操作
+    for(int i&#x3D;1;i&lt;&#x3D;n;i++)&#x2F;&#x2F;枚举每一个点
+        for(int j&#x3D;head[i];j!&#x3D;-1;j&#x3D;nex[j])&#x2F;&#x2F;枚举i的每一条边
+        &#123;
+            int k&#x3D;ed[j];
+            if(id[i]!&#x3D;id[k])&#x2F;&#x2F;强连通分量的编号不同连接该边
+                add_new(id[i],id[k]);
+        &#125;
+    return 0;
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
                 
             </div>
             <hr/>
@@ -475,7 +562,7 @@ ll get_hash2(int l,int r)
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://116-116.github.io/2022/08/30/ha-xi/">http://116-116.github.io/2022/08/30/ha-xi/</a>
+                    <a href="http://116-116.github.io/2022/08/31/tarjan-qiang-lian-tong-fen-liang/">http://116-116.github.io/2022/08/31/tarjan-qiang-lian-tong-fen-liang/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -580,54 +667,18 @@ ll get_hash2(int l,int r)
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2022/08/31/kmp/">
+                <a href="/2022/08/31/tarjan-qiang-lian-tong-fen-liang/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/22.jpg" class="responsive-img" alt="kmp">
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="tarjan强连通分量">
                         
-                        <span class="card-title">kmp</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-                        
-                    </div>
-                    <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2022-08-31
-                        </span>
-                        <span class="publish-author">
-                            
-                            <i class="fas fa-user fa-fw"></i>
-                            116
-                            
-                        </span>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
-            </div>
-            <div class="card">
-                <a href="/2022/08/30/bing-cha-ji/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="并查集">
-                        
-                        <span class="card-title">并查集</span>
+                        <span class="card-title">tarjan强连通分量</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -638,7 +689,45 @@ ll get_hash2(int l,int r)
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-08-30
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-08-31
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fas fa-user fa-fw"></i>
+                            116
+                            
+                        </span>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+        
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fas fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2022/08/31/zi-dian-shu/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="字典树">
+                        
+                        <span class="card-title">字典树</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-08-31
                             </span>
                         <span class="publish-author">
                             

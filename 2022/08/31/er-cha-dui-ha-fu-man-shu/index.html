@@ -4,11 +4,14 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="哈希, 咳咳">
-    <meta name="description" content="const int MAXN&amp;#x3D;100010,P&amp;#x3D;131,M&amp;#x3D;1e9+7;
-typedef unsigned long long ull;
-typedef long long ll;
-char s[MAXN];&amp;">
+    <meta name="keywords" content="二叉堆, 咳咳">
+    <meta name="description" content="#include &amp;lt;iostream&amp;gt;
+#include &amp;lt;cstring&amp;gt;
+#include &amp;lt;algorithm&amp;gt;
+
+using namespace std;
+
+const int SIZE&amp;#x3D">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -22,7 +25,7 @@ char s[MAXN];&amp;">
 
     
 
-    <title>哈希 | 咳咳</title>
+    <title>二叉堆 | 咳咳</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
@@ -249,12 +252,12 @@ char s[MAXN];&amp;">
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/12.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/17.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">哈希</h1>
+                    <h1 class="description center-align post-title">二叉堆</h1>
                 </div>
             </div>
         </div>
@@ -382,7 +385,7 @@ char s[MAXN];&amp;">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-08-30
+                    2022-08-31
                 </div>
                 
 
@@ -391,7 +394,7 @@ char s[MAXN];&amp;">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    245
+                    295
                 </div>
                 
 
@@ -421,35 +424,78 @@ char s[MAXN];&amp;">
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <pre class="line-numbers language-none"><code class="language-none">const int MAXN&#x3D;100010,P&#x3D;131,M&#x3D;1e9+7;
-typedef unsigned long long ull;
-typedef long long ll;
-char s[MAXN];&#x2F;&#x2F;已知字符串s从1开始存储
-ull Hash1[MAXN],p1[MAXN];&#x2F;&#x2F;此处用自动取模
-ll Hash2[MAXN],p2[MAXN];&#x2F;&#x2F;此处采用单Hash方法
-&#x2F;&#x2F;Hash1和Hash2共同构成双Hash方法
- 
-p1[0]&#x3D;p2[0]&#x3D;1;
-int len&#x3D;strlen(s+1);
-for(int i&#x3D;1;i&lt;&#x3D;len;i++)
-&#123;&#x2F;&#x2F;此处为了方便,字符串的字符分配值就是该字符的ascii码
-	p1[i]&#x3D;p1[i-1]*P;&#x2F;&#x2F;求P的次方
-	Hash1[i]&#x3D;Hash1[i-1]*P+s[i];&#x2F;&#x2F;利用类似前缀和的思想求Hash
-	p2[i]&#x3D;((p2[i-1]%M)*P)%M;&#x2F;&#x2F;(nm)%mod&#x3D;(n%mod * m%mod) %mod;
-	Hash2[i]&#x3D;(((Hash2[i-1]%M)*P)%M+s[i])%M;
+                <pre class="line-numbers language-none"><code class="language-none">#include &lt;iostream&gt;
+#include &lt;cstring&gt;
+#include &lt;algorithm&gt;
+
+using namespace std;
+
+const int SIZE&#x3D;10010;
+int n&#x3D;12,heap[SIZE]&#x3D;&#123;0,25,14,19,5,12,17,8,1,3,10,6,2&#125;;
+
+void up(int p)&#x2F;&#x2F;向上调整
+&#123;
+    while(p&gt;1)
+    &#123;
+        if(heap[p]&gt;heap[p&#x2F;2])&#x2F;&#x2F;当前结点大于父结点,交换;反之,不交换
+            swap(heap[p],heap[p&#x2F;2]),p&#x2F;&#x3D;2;
+        else break;
+    &#125;
 &#125;
 
-&#x2F;&#x2F;求任意字串的哈希值
-ull get_hash1(int l,int r)
+void Insert(int val)&#x2F;&#x2F;插入val
 &#123;
-	return Hash1[r]-Hash1[l-1]*p1[r-l+1];
+    heap[++n]&#x3D;val;
+    up(n);
 &#125;
- 
-ll get_hash2(int l,int r)
+
+int GetTop()&#x2F;&#x2F;查询最值
 &#123;
-	return ((Hash2[r]-Hash2[l-1]*p2[r-l+1])%M+M)%M;
+    return heap[1];
 &#125;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+void down(int p)&#x2F;&#x2F;向下调整
+&#123;
+    int s&#x3D;p*2;&#x2F;&#x2F;p的左结点
+    while(s&lt;&#x3D;n)
+    &#123;
+        if(s&lt;n&amp;&amp;heap[s]&lt;heap[s+1])&#x2F;&#x2F;左右子结点中选取较大值
+            s++;
+        if(heap[s]&gt;heap[p])
+        &#123;
+            swap(heap[s],heap[p]);
+            p&#x3D;s;
+            s&#x3D;p*2;
+        &#125;
+        else break;
+    &#125;
+&#125;
+
+void Extract()&#x2F;&#x2F;删除堆顶元素
+&#123;
+    heap[1]&#x3D;heap[n--];
+    down(1);
+&#125;
+
+void Remove(int k)&#x2F;&#x2F;删除二叉堆中第k个元素
+&#123;
+    heap[k]&#x3D;heap[n--];
+    up(k);
+    down(k);
+&#125;
+
+int main()
+&#123;
+    &#x2F;&#x2F;Insert(20);
+    &#x2F;&#x2F;Extract();
+    Remove(3);
+    for(int i&#x3D;1;i&lt;&#x3D;n;i++)
+        printf(&quot;%d %d\n&quot;,i,heap[i]);
+    printf(&quot;%d\n&quot;,GetTop());
+    return 0;
+&#125;
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
                 
             </div>
             <hr/>
@@ -475,7 +521,7 @@ ll get_hash2(int l,int r)
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://116-116.github.io/2022/08/30/ha-xi/">http://116-116.github.io/2022/08/30/ha-xi/</a>
+                    <a href="http://116-116.github.io/2022/08/31/er-cha-dui-ha-fu-man-shu/">http://116-116.github.io/2022/08/31/er-cha-dui-ha-fu-man-shu/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -584,13 +630,13 @@ ll get_hash2(int l,int r)
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2022/08/31/kmp/">
+                <a href="/2022/08/31/zi-dian-shu/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/22.jpg" class="responsive-img" alt="kmp">
+                        <img src="/medias/featureimages/8.jpg" class="responsive-img" alt="字典树">
                         
-                        <span class="card-title">kmp</span>
+                        <span class="card-title">字典树</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -621,13 +667,13 @@ ll get_hash2(int l,int r)
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/08/30/bing-cha-ji/">
+                <a href="/2022/08/31/ma-la-che/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="并查集">
+                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="马拉车">
                         
-                        <span class="card-title">并查集</span>
+                        <span class="card-title">马拉车</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -638,7 +684,7 @@ ll get_hash2(int l,int r)
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-08-30
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-08-31
                             </span>
                         <span class="publish-author">
                             
