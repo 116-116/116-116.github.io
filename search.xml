@@ -4,6 +4,58 @@
   
     
     <entry>
+      <title>哈希</title>
+      <link href="/2022/08/30/ha-xi/"/>
+      <url>/2022/08/30/ha-xi/</url>
+      
+        <content type="html"><![CDATA[<pre class="line-numbers language-none"><code class="language-none">const int MAXN&#x3D;100010,P&#x3D;131,M&#x3D;1e9+7;typedef unsigned long long ull;typedef long long ll;char s[MAXN];&#x2F;&#x2F;已知字符串s从1开始存储ull Hash1[MAXN],p1[MAXN];&#x2F;&#x2F;此处用自动取模ll Hash2[MAXN],p2[MAXN];&#x2F;&#x2F;此处采用单Hash方法&#x2F;&#x2F;Hash1和Hash2共同构成双Hash方法 p1[0]&#x3D;p2[0]&#x3D;1;int len&#x3D;strlen(s+1);for(int i&#x3D;1;i&lt;&#x3D;len;i++)&#123;&#x2F;&#x2F;此处为了方便,字符串的字符分配值就是该字符的ascii码p1[i]&#x3D;p1[i-1]*P;&#x2F;&#x2F;求P的次方Hash1[i]&#x3D;Hash1[i-1]*P+s[i];&#x2F;&#x2F;利用类似前缀和的思想求Hashp2[i]&#x3D;((p2[i-1]%M)*P)%M;&#x2F;&#x2F;(nm)%mod&#x3D;(n%mod * m%mod) %mod;Hash2[i]&#x3D;(((Hash2[i-1]%M)*P)%M+s[i])%M;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>并查集</title>
+      <link href="/2022/08/30/bing-cha-ji/"/>
+      <url>/2022/08/30/bing-cha-ji/</url>
+      
+        <content type="html"><![CDATA[<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F;银河英雄传说#include &lt;iostream&gt;#include &lt;algorithm&gt;using namespace std;const int MAXN&#x3D;30010;int t;int fa[MAXN],d[MAXN],siz[MAXN];void init()&#123;    for(int i&#x3D;1;i&lt;MAXN;i++)        fa[i]&#x3D;i,siz[i]&#x3D;1;&#x2F;&#x2F;初始化时siz每个集合只有1个&#125;int find(int x)&#123;    if(x&#x3D;&#x3D;fa[x])    return x;    int root&#x3D;find(fa[x]);&#x2F;&#x2F;递归计算集合代表    d[x]+&#x3D;d[fa[x]];&#x2F;&#x2F;维护d数组,对边权求和    return fa[x]&#x3D;root;&#x2F;&#x2F;路径压缩&#125;void join(int x,int y)&#123;    int fx&#x3D;find(x),fy&#x3D;find(y);    if(fx!&#x3D;fy)    &#123;        fa[fx]&#x3D;fy,d[fx]&#x3D;siz[fy];        siz[fy]+&#x3D;siz[fx];    &#125;&#125;int main()&#123;    init();    scanf(&quot;%d\n&quot;,&amp;t);    while(t--)    &#123;        int a,b;        char op;        scanf(&quot;%c %d %d &quot;,&amp;op,&amp;a,&amp;b);        if(op&#x3D;&#x3D;&#39;M&#39;)&#x2F;&#x2F;合并            join(a,b);        else&#x2F;&#x2F;查询        &#123;            if(a&#x3D;&#x3D;b)                printf(&quot;0\n&quot;);            else if(find(a)&#x3D;&#x3D;find(b))                printf(&quot;%d\n&quot;,abs(d[a]-d[b])-1);            else printf(&quot;-1\n&quot;);        &#125;    &#125;    return 0;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>双向广搜</title>
+      <link href="/2022/08/30/shuang-xiang-guang-sou/"/>
+      <url>/2022/08/30/shuang-xiang-guang-sou/</url>
+      
+        <content type="html"><![CDATA[<pre class="line-numbers language-none"><code class="language-none">void BFS_expand(queue&lt;Status&gt;&amp; Q,int flag)&#123;    Status s&#x3D;Q.front();&#x2F;&#x2F;从队列中得到头结点       Q.pop();    for(每个s的子结点t)&#123;        t.state&#x3D;Get_state(t);&#x2F;&#x2F;获取子结点的状态        if(flag&#x3D;&#x3D;1)&#123;&#x2F;&#x2F;正向队列中判断            if(vis[t.state]!&#x3D;1)&#123;&#x2F;&#x2F;没有在正向队列中出现过                if(vis[t.state]&#x3D;&#x3D;2)&#123;&#x2F;&#x2F;该状态在反向队列中出现过                    &#x2F;&#x2F;各种操作  found&#x3D;1;                    return ;                &#125;                vis[t.state]&#x3D;1;&#x2F;&#x2F;标记为在正向队列中   Q.push(t);            &#125;        &#125;        else&#x2F;&#x2F;在反向队列中判断&#123;            if(vis[t.state]!&#x3D;2)&#123;&#x2F;&#x2F;没有在反向队列出现过                if(vis[t.state]&#x3D;&#x3D;1)&#123;&#x2F;&#x2F;该状态在正向队列中出现过                    &#x2F;&#x2F;各种操作  found&#x3D;1;                    return ;                &#125;                vis[t.state]&#x3D;2;&#x2F;&#x2F;标记为在反向队列中   Q.push(t);            &#125;        &#125;            &#125;&#125;int found;void DBFS()&#x2F;&#x2F;双向广搜&#123;    found&#x3D;false;    memset(vis,0,sizeof(vis));&#x2F;&#x2F;判重数组    while(Q1.size()&gt;0)  Q1.pop();&#x2F;&#x2F;正向队列        while(Q2.size()&gt;0)  Q2.pop();&#x2F;&#x2F;反向队列    &#x2F;&#x2F;正向扩展的状态标记为1,反向扩展标记为2    vis[s1]&#x3D;1;&#x2F;&#x2F;初始状态s1标记为1    vis[s2]&#x3D;2;&#x2F;&#x2F;结束状态s2标记为2    Q1.push(s1.state);&#x2F;&#x2F;初始状态入正向队列    Q2.push(s2.state);&#x2F;&#x2F;结束状态入反向队列    while(Q1.size()&gt;0||Q2.size()&gt;0)&#123;        if(Q1.size()&gt;0)            BFS_expand(Q1,1);&#x2F;&#x2F;在正向队列中搜索        if(found&#x3D;&#x3D;1)&#x2F;&#x2F;搜索结束            return ;        if(Q2.size()&gt;0)            BFS_expand(Q2,0);&#x2F;&#x2F;在反向队列中搜索        if(found&#x3D;&#x3D;1)&#x2F;&#x2F;搜索结束            return ;    &#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>单调队列滑动窗口</title>
+      <link href="/2022/08/30/dan-diao-dui-lie-hua-dong-chuang-kou/"/>
+      <url>/2022/08/30/dan-diao-dui-lie-hua-dong-chuang-kou/</url>
+      
+        <content type="html"><![CDATA[<pre class="line-numbers language-none"><code class="language-none">#include &lt;iostream&gt;#include &lt;cstdio&gt;#include &lt;queue&gt;using namespace std;const int MAXN&#x3D;1000010;int n,k,a[MAXN];deque&lt;int&gt; dq1,dq2;int main()&#123;    scanf(&quot;%d %d&quot;,&amp;n,&amp;k);    &#x2F;&#x2F;求最小值,使用单调递增队列    for(int i&#x3D;0;i&lt;&#x3D;n-1;i++)    &#123;        scanf(&quot;%d&quot;,&amp;a[i]);        if(dq1.size()&gt;0&amp;&amp;dq1.front()&lt;&#x3D;i-k)&#x2F;&#x2F;处理滑动窗口左端            dq1.pop_front();&#x2F;&#x2F;弹出队头        while(dq1.size()&gt;0&amp;&amp;a[i]&lt;&#x3D;a[dq1.back()])&#x2F;&#x2F;把大于等于入队元素在队列中的值都剔除            dq1.pop_back();        dq1.push_back(i);&#x2F;&#x2F;将该元素的下标放入队列中        if(i&gt;&#x3D;k-1)&#x2F;&#x2F;达到区间长度输出队头元素,此处也可存入数组中,全部处理完再输出            printf(&quot;%d &quot;,a[dq1.front()]);    &#125;    printf(&quot;\n&quot;);    &#x2F;&#x2F;求最大值,使用单调递减队列    for(int i&#x3D;0;i&lt;&#x3D;n-1;i++)    &#123;        if(dq2.size()&gt;0&amp;&amp;dq2.front()&lt;&#x3D;i-k)&#x2F;&#x2F;处理滑动窗口左端            dq2.pop_front();        while(dq2.size()&gt;0&amp;&amp;a[i]&gt;&#x3D;a[dq2.back()])&#x2F;&#x2F;把小于等于入队元素在队列中的值都剔除            dq2.pop_back();        dq2.push_back(i);&#x2F;&#x2F;将该元素的下标放入队列中        if(i&gt;&#x3D;k-1)&#x2F;&#x2F;达到区间长度输出队头元素            printf(&quot;%d &quot;,a[dq2.front()]);    &#125;    return 0;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>]]></content>
+      
+      
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>单调栈</title>
       <link href="/2022/08/30/dan-diao-zhan/"/>
       <url>/2022/08/30/dan-diao-zhan/</url>
