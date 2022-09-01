@@ -4,17 +4,13 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="字典树, 咳咳">
+    <meta name="keywords" content="tarjan强连通分量, 咳咳">
     <meta name="description" content="#include &amp;lt;iostream&amp;gt;
+#include &amp;lt;vector&amp;gt;
 #include &amp;lt;cstring&amp;gt;
-
-#define MAXN 100010
-
+#include &amp;lt;cmath&amp;gt;
 using namespace std;
-
-char op,str[MAXN];
-
-int t">
+c">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -28,7 +24,7 @@ int t">
 
     
 
-    <title>字典树 | 咳咳</title>
+    <title>tarjan强连通分量 | 咳咳</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
@@ -255,12 +251,12 @@ int t">
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/8.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/5.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">字典树</h1>
+                    <h1 class="description center-align post-title">tarjan强连通分量</h1>
                 </div>
             </div>
         </div>
@@ -392,7 +388,7 @@ int t">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-08-31
+                    2022-09-01
                 </div>
                 
 
@@ -401,14 +397,14 @@ int t">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    337
+                    385
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    1 分
+                    2 分
                 </div>
                 
 
@@ -432,65 +428,75 @@ int t">
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <pre class="line-numbers language-none"><code class="language-none">#include &lt;iostream&gt;
+#include &lt;vector&gt;
 #include &lt;cstring&gt;
-
-#define MAXN 100010
-
+#include &lt;cmath&gt;
 using namespace std;
-
-char op,str[MAXN];
-
-int trie[MAXN][26],idx&#x3D;0;&#x2F;&#x2F;此处以小写字符(a~z)为例
-int cnt[MAXN],vis[MAXN];
-&#x2F;&#x2F;cnt用来记录该字符串末尾出现次数;
-&#x2F;&#x2F;vis用来记录是否存在该字符串
-
-void insert(char *s)&#x2F;&#x2F;插入字符串
+const int N &#x3D; 500005;
+vector&lt;int&gt; son[N];
+int n, m, dep[N], first[N], last[N], top, vis[N];
+int st[N * 2][40]; &#x2F;&#x2F; 20大小根据题意可改动
+void dfs(int x, int d)
 &#123;
-    int p&#x3D;0;&#x2F;&#x2F;指向根结点
-    int len&#x3D;strlen(s);
-    for(int i&#x3D;0;i&lt;&#x3D;len-1;i++)&#x2F;&#x2F;遍历字符串s所有字符
+    ++top, st[top][0] &#x3D; x; &#x2F;&#x2F;将x加入欧拉序中
+    first[x] &#x3D; top;        &#x2F;&#x2F;记录x第一次出现的位置
+    vis[x] &#x3D; 1;
+    for (int i &#x3D; 0; i &lt; son[x].size(); ++i)
     &#123;
-        int u&#x3D;s[i]-&#39;a&#39;;
-        if(trie[p][u]&#x3D;&#x3D;0)&#x2F;&#x2F;当前结点为空,新建
-            trie[p][u]&#x3D;++idx;
-        p&#x3D;trie[p][u];
+        if (!vis[son[x][i]])
+        &#123;
+            dfs(son[x][i], d + 1); &#x2F;&#x2F;递归子节点
+            ++top;
+            st[top][0] &#x3D; x; &#x2F;&#x2F;回溯到x后 x加入欧拉序中
+        &#125;
     &#125;
-    cnt[p]++;&#x2F;&#x2F;记录该字符串末尾出现的次数
-    vis[p]&#x3D;1;&#x2F;&#x2F;为查询是否存在出现该字符串做准备,也可根据cnt数组判断
+    dep[x] &#x3D; d;
+    last[x] &#x3D; top; &#x2F;&#x2F;记录x最后一次出现的位置
 &#125;
-
-int query(char *s)&#x2F;&#x2F;查询字符串出现次数（或查询字符串是否出现过）
+void get_ST(int n)
 &#123;
-    int p&#x3D;0;
-    int len&#x3D;strlen(s);
-    for(int i&#x3D;0;i&lt;&#x3D;len-1;i++)
-    &#123;
-        int u&#x3D;s[i]-&#39;a&#39;;
-        if(trie[p][u]&#x3D;&#x3D;0)
-            return 0;&#x2F;&#x2F;不存在
-        p&#x3D;trie[p][u];
-    &#125;
-    return cnt[p];
-    &#x2F;&#x2F;return vis[p];
+    for (int j &#x3D; 1; (1 &lt;&lt; j) &lt;&#x3D; n; ++j)
+        for (int i &#x3D; 1; i + (1 &lt;&lt; j) - 1 &lt;&#x3D; n; ++i)
+        &#123;
+            int id1 &#x3D; st[i][j - 1], id2 &#x3D; st[i + (1 &lt;&lt; (j - 1))][j - 1];
+            if (dep[id1] &lt; dep[id2])
+                st[i][j] &#x3D; id1;
+            else
+                st[i][j] &#x3D; id2;
+        &#125;
 &#125;
-
-int n;
-
+int rmq(int l, int r)
+&#123;
+    int d &#x3D; log2(r - l + 1);
+    int id1 &#x3D; st[l][d], id2 &#x3D; st[r - (1 &lt;&lt; d) + 1][d];
+    if (dep[id1] &lt; dep[id2])
+        return id1;
+    return id2;
+&#125;
 int main()
 &#123;
-    cin &gt;&gt; n;
-    while(n--)
+    int temp;
+    scanf(&quot;%d%d%d&quot;, &amp;n, &amp;m, &amp;temp);
+    int a, b;
+    for (int i &#x3D; 1; i &lt; n; i++)
     &#123;
-        cin &gt;&gt; op &gt;&gt; str;
-        if(op&#x3D;&#x3D;&#39;I&#39;)
-            insert(str);
-        else printf(&quot;%d\n&quot;,query(str));
+        scanf(&quot;%d%d&quot;, &amp;a, &amp;b);
+        son[a].push_back(b);
+        son[b].push_back(a);
+    &#125;
+    top &#x3D; 0;
+    dfs(temp, 1);
+    get_ST(top);
+    int x, y;
+    while (m--)
+    &#123;
+        scanf(&quot;%d%d&quot;, &amp;x, &amp;y);
+        if (first[x] &gt; first[y])
+            swap(x, y);
+        printf(&quot;%d\n&quot;, rmq(first[x], first[y]));
     &#125;
     return 0;
-&#125;
-
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
                 
             </div>
             <hr/>
@@ -516,7 +522,7 @@ int main()
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://116-116.github.io/2022/08/31/zi-dian-shu/">http://116-116.github.io/2022/08/31/zi-dian-shu/</a>
+                    <a href="http://116-116.github.io/2022/09/01/lca-rmq-ou-la-xu/">http://116-116.github.io/2022/09/01/lca-rmq-ou-la-xu/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -625,11 +631,12 @@ int main()
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2022/08/31/tarjan-qiang-lian-tong-fen-liang/">
+                <a href="/2022/09/01/lca-rmq-ou-la-xu/">
                     <div class="card-image">
                         
                         
@@ -645,9 +652,9 @@ int main()
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2022-08-31
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-09-01
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -656,6 +663,7 @@ int main()
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
@@ -674,13 +682,13 @@ int main()
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/08/31/er-cha-dui-ha-fu-man-shu/">
+                <a href="/2022/08/31/tarjan-qiang-lian-tong-fen-liang/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="二叉堆">
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="tarjan强连通分量">
                         
-                        <span class="card-title">二叉堆</span>
+                        <span class="card-title">tarjan强连通分量</span>
                     </div>
                 </a>
                 <div class="card-content article-content">

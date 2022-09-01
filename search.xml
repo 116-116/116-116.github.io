@@ -5,12 +5,37 @@
     
     <entry>
       <title>tarjan强连通分量</title>
+      <link href="/2022/09/01/lca-rmq-ou-la-xu/"/>
+      <url>/2022/09/01/lca-rmq-ou-la-xu/</url>
+      
+        <content type="html"><![CDATA[<pre class="line-numbers language-none"><code class="language-none">#include &lt;iostream&gt;#include &lt;vector&gt;#include &lt;cstring&gt;#include &lt;cmath&gt;using namespace std;const int N &#x3D; 500005;vector&lt;int&gt; son[N];int n, m, dep[N], first[N], last[N], top, vis[N];int st[N * 2][40]; &#x2F;&#x2F; 20大小根据题意可改动void dfs(int x, int d)&#123;    ++top, st[top][0] &#x3D; x; &#x2F;&#x2F;将x加入欧拉序中    first[x] &#x3D; top;        &#x2F;&#x2F;记录x第一次出现的位置    vis[x] &#x3D; 1;    for (int i &#x3D; 0; i &lt; son[x].size(); ++i)    &#123;        if (!vis[son[x][i]])        &#123;            dfs(son[x][i], d + 1); &#x2F;&#x2F;递归子节点            ++top;            st[top][0] &#x3D; x; &#x2F;&#x2F;回溯到x后 x加入欧拉序中        &#125;    &#125;    dep[x] &#x3D; d;    last[x] &#x3D; top; &#x2F;&#x2F;记录x最后一次出现的位置&#125;void get_ST(int n)&#123;    for (int j &#x3D; 1; (1 &lt;&lt; j) &lt;&#x3D; n; ++j)        for (int i &#x3D; 1; i + (1 &lt;&lt; j) - 1 &lt;&#x3D; n; ++i)        &#123;            int id1 &#x3D; st[i][j - 1], id2 &#x3D; st[i + (1 &lt;&lt; (j - 1))][j - 1];            if (dep[id1] &lt; dep[id2])                st[i][j] &#x3D; id1;            else                st[i][j] &#x3D; id2;        &#125;&#125;int rmq(int l, int r)&#123;    int d &#x3D; log2(r - l + 1);    int id1 &#x3D; st[l][d], id2 &#x3D; st[r - (1 &lt;&lt; d) + 1][d];    if (dep[id1] &lt; dep[id2])        return id1;    return id2;&#125;int main()&#123;    int temp;    scanf(&quot;%d%d%d&quot;, &amp;n, &amp;m, &amp;temp);    int a, b;    for (int i &#x3D; 1; i &lt; n; i++)    &#123;        scanf(&quot;%d%d&quot;, &amp;a, &amp;b);        son[a].push_back(b);        son[b].push_back(a);    &#125;    top &#x3D; 0;    dfs(temp, 1);    get_ST(top);    int x, y;    while (m--)    &#123;        scanf(&quot;%d%d&quot;, &amp;x, &amp;y);        if (first[x] &gt; first[y])            swap(x, y);        printf(&quot;%d\n&quot;, rmq(first[x], first[y]));    &#125;    return 0;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 算法c++ </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>tarjan强连通分量</title>
       <link href="/2022/08/31/tarjan-qiang-lian-tong-fen-liang/"/>
       <url>/2022/08/31/tarjan-qiang-lian-tong-fen-liang/</url>
       
         <content type="html"><![CDATA[<pre class="line-numbers language-none"><code class="language-none">#include &lt;iostream&gt;#include &lt;algorithm&gt;#include &lt;cstring&gt;#include &lt;vector&gt;using namespace std;int n,m;const int MAXN&#x3D;100010,MAXM&#x3D;1000010;&#x2F;&#x2F;链式前向星(new代表缩点后的图)int head[MAXN],ed[MAXM],nex[MAXM],idx;int head_new[MAXN],ed_new[MAXM],nex_new[MAXM],idx_new;int dfn[MAXN],low[MAXN],timestamp;&#x2F;&#x2F;dfn[i]表示遍历到i的时间戳,timestamp时间戳计数&#x2F;&#x2F;low[i]表示从i开始走(遍历它的子树),所能遍历到的最小时间戳是什么(i节点当前所在强连通块的最高点)int stk[MAXN],in_stk[MAXN],top;&#x2F;&#x2F;stk数组实现栈,top表示栈顶位置,in_stk[i]标记i是否在栈中int id[MAXN],scc_cnt,scc_size[MAXN];&#x2F;&#x2F;id[i]表示编号为i节点的强连通块编号&#x2F;&#x2F;scc_cnt表示强连通分量的个数,scc_size[i]表示编号为i的强连通分量中点的个数vector&lt;int&gt; scc[MAXN];&#x2F;&#x2F;scc[i]存储编号为i的强连通分量中的点void init()&#x2F;&#x2F;初始化&#123;    idx&#x3D;idx_new&#x3D;scc_cnt&#x3D;top&#x3D;0;    memset(head,-1,sizeof(head));    memset(head_new,-1,sizeof(head_new));&#125;void add(int a,int b)&#x2F;&#x2F;建立原图&#123;    ed[idx]&#x3D;b;    nex[idx]&#x3D;head[a];    head[a]&#x3D;idx++;&#125;void add_new(int a,int b)&#x2F;&#x2F;建立缩点图&#123;    ed_new[idx_new]&#x3D;b;    nex_new[idx_new]&#x3D;head_new[a];    head_new[a]&#x3D;idx_new++;&#125;void tarjan(int u)&#x2F;&#x2F;tarjan算法(采用数组栈实现)&#123;    dfn[u]&#x3D;low[u]&#x3D;++timestamp;&#x2F;&#x2F;初始化(第一次访问赋值新的时间戳)    stk[++top]&#x3D;u,in_stk[u]&#x3D;1;&#x2F;&#x2F;入栈操作,同时标记u在栈中        for(int i&#x3D;head[u];i!&#x3D;-1;i&#x3D;nex[i])&#x2F;&#x2F;遍历u的所有出边    &#123;        int j&#x3D;ed[i];&#x2F;&#x2F;u的一条出边的终点        if(dfn[j]&#x3D;&#x3D;0)&#x2F;&#x2F;当前点没有遍历        &#123;            tarjan(j);             &#x2F;&#x2F;j也许存在反向边到达比u还高的层,             &#x2F;&#x2F;所以用j能到的最小dfn序(最高点)更新u能达到的(最小dfn序)最高点            low[u]&#x3D;min(low[u],low[j]);&#x2F;&#x2F;更新low[u],注意此处是low[j]        &#125;        else if(in_stk[j]&#x3D;&#x3D;1)&#x2F;&#x2F;j在栈中            low[u]&#x3D;min(low[u],dfn[j]);&#x2F;&#x2F;更新low[u],注意此处是dfn[j]    &#125;    &#x2F;&#x2F;回到了强连通块的最高点,那么就将这个强连通块的所有节点进行缩点    if(low[u]&#x3D;&#x3D;dfn[u])    &#123;        scc_cnt++;&#x2F;&#x2F;强连通分量个数+1        int y;        do&#123;            y&#x3D;stk[top--];&#x2F;&#x2F;出栈            in_stk[y]&#x3D;0;&#x2F;&#x2F;标记清0            id[y]&#x3D;scc_cnt;&#x2F;&#x2F;赋值当前y的强连通分量的编号            scc_size[scc_cnt]++;&#x2F;&#x2F;size++            scc[scc_cnt].push_back(y);&#x2F;&#x2F;将点放入scc[scc_cnt]        &#125;while(u!&#x3D;y);            &#125;    &#125;int main()&#123;    init();    scanf(&quot;%d %d&quot;,&amp;n,&amp;m);    for(int i&#x3D;1;i&lt;&#x3D;m;i++)    &#123;        int a,b;        scanf(&quot;%d %d&quot;,&amp;a,&amp;b);        add(a,b);    &#125;        for(int i&#x3D;1;i&lt;&#x3D;n;i++)        if(dfn[i]&#x3D;&#x3D;0)&#x2F;&#x2F;当前未搜索过            tarjan(i);        cout &lt;&lt; scc_cnt &lt;&lt; endl;&#x2F;&#x2F;输出强连通分量的个数        &#x2F;&#x2F;输出每个强连图分量的点    for(int i&#x3D;1;i&lt;&#x3D;scc_cnt;i++)    &#123;        for(int j&#x3D;scc[i].size()-1;j&gt;&#x3D;0;j--)            cout &lt;&lt; scc[i][j] &lt;&lt; &quot; &quot;;        cout &lt;&lt; endl;    &#125;    &#x2F;&#x2F;缩点操作    for(int i&#x3D;1;i&lt;&#x3D;n;i++)&#x2F;&#x2F;枚举每一个点        for(int j&#x3D;head[i];j!&#x3D;-1;j&#x3D;nex[j])&#x2F;&#x2F;枚举i的每一条边        &#123;            int k&#x3D;ed[j];            if(id[i]!&#x3D;id[k])&#x2F;&#x2F;强连通分量的编号不同连接该边                add_new(id[i],id[k]);        &#125;    return 0;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>]]></content>
       
       
+      
+        <tags>
+            
+            <tag> 算法c++ </tag>
+            
+        </tags>
       
     </entry>
     
@@ -25,6 +50,12 @@
       
       
       
+        <tags>
+            
+            <tag> 算法c++ </tag>
+            
+        </tags>
+      
     </entry>
     
     
@@ -38,6 +69,12 @@
       
       
       
+        <tags>
+            
+            <tag> 算法c++ </tag>
+            
+        </tags>
+      
     </entry>
     
     
@@ -50,6 +87,12 @@
         <content type="html"><![CDATA[<pre class="line-numbers language-none"><code class="language-none">#include &lt;iostream&gt;#include &lt;cstring&gt;#define MAXN 20000010using namespace std;int len,p[MAXN];&#x2F;&#x2F;变形后字符串的长度char b[MAXN];&#x2F;&#x2F;存变形后的字符串string s;&#x2F;&#x2F;原始字符串void init()&#123;    len&#x3D;0;    b[len++]&#x3D;&#39;!&#39;;&#x2F;&#x2F;起点哨兵    b[len++]&#x3D;&#39;#&#39;;    for(int i&#x3D;0;i&lt;s.size();i++)    &#123;        b[len++]&#x3D;s[i];        b[len++]&#x3D;&#39;#&#39;;    &#125;    b[len++]&#x3D;&#39;@&#39;;&#x2F;&#x2F;末尾哨兵&#125;int manacher()&#123;    int rt&#x3D;0,mid&#x3D;0,res&#x3D;0;    for(int i&#x3D;1;i&lt;&#x3D;len-2;i++)    &#123;        if(i&lt;rt)            p[i]&#x3D;min(p[2*mid-i],rt-i);        else p[i]&#x3D;1;        while(b[i+p[i]]&#x3D;&#x3D;b[i-p[i]])        &#x2F;&#x2F;以i为中心p[i]为半径不断往外扩展,如果相等继续扩展            p[i]++;        if(i+p[i]&gt;rt)&#x2F;&#x2F;如果以i为中心的最大回文串能更新rt        &#123;            rt&#x3D;i+p[i];            mid&#x3D;i;&#x2F;&#x2F;更新rt对应的mid        &#125;        res&#x3D;max(res,p[i]-1);&#x2F;&#x2F;注意此处是p[i]-1    &#125;    return res;   &#125;int main()&#123;    cin &gt;&gt; s;    init();    &#x2F;&#x2F;cout &lt;&lt; b &lt;&lt; endl;    cout &lt;&lt; manacher() &lt;&lt; endl;    return 0;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>]]></content>
       
       
+      
+        <tags>
+            
+            <tag> 算法c++ </tag>
+            
+        </tags>
       
     </entry>
     
@@ -83,6 +126,12 @@
       
       
       
+        <tags>
+            
+            <tag> 算法c++ </tag>
+            
+        </tags>
+      
     </entry>
     
     
@@ -95,6 +144,12 @@
         <content type="html"><![CDATA[<pre class="line-numbers language-none"><code class="language-none">&#x2F;&#x2F;银河英雄传说#include &lt;iostream&gt;#include &lt;algorithm&gt;using namespace std;const int MAXN&#x3D;30010;int t;int fa[MAXN],d[MAXN],siz[MAXN];void init()&#123;    for(int i&#x3D;1;i&lt;MAXN;i++)        fa[i]&#x3D;i,siz[i]&#x3D;1;&#x2F;&#x2F;初始化时siz每个集合只有1个&#125;int find(int x)&#123;    if(x&#x3D;&#x3D;fa[x])    return x;    int root&#x3D;find(fa[x]);&#x2F;&#x2F;递归计算集合代表    d[x]+&#x3D;d[fa[x]];&#x2F;&#x2F;维护d数组,对边权求和    return fa[x]&#x3D;root;&#x2F;&#x2F;路径压缩&#125;void join(int x,int y)&#123;    int fx&#x3D;find(x),fy&#x3D;find(y);    if(fx!&#x3D;fy)    &#123;        fa[fx]&#x3D;fy,d[fx]&#x3D;siz[fy];        siz[fy]+&#x3D;siz[fx];    &#125;&#125;int main()&#123;    init();    scanf(&quot;%d\n&quot;,&amp;t);    while(t--)    &#123;        int a,b;        char op;        scanf(&quot;%c %d %d &quot;,&amp;op,&amp;a,&amp;b);        if(op&#x3D;&#x3D;&#39;M&#39;)&#x2F;&#x2F;合并            join(a,b);        else&#x2F;&#x2F;查询        &#123;            if(a&#x3D;&#x3D;b)                printf(&quot;0\n&quot;);            else if(find(a)&#x3D;&#x3D;find(b))                printf(&quot;%d\n&quot;,abs(d[a]-d[b])-1);            else printf(&quot;-1\n&quot;);        &#125;    &#125;    return 0;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>]]></content>
       
       
+      
+        <tags>
+            
+            <tag> 算法c++ </tag>
+            
+        </tags>
       
     </entry>
     
@@ -109,6 +164,12 @@
       
       
       
+        <tags>
+            
+            <tag> 算法c++ </tag>
+            
+        </tags>
+      
     </entry>
     
     
@@ -122,6 +183,12 @@
       
       
       
+        <tags>
+            
+            <tag> 算法c++ </tag>
+            
+        </tags>
+      
     </entry>
     
     
@@ -134,6 +201,12 @@
         <content type="html"><![CDATA[<pre class="line-numbers language-none"><code class="language-none">stack&lt;int&gt; sta;&#x2F;&#x2F;此处以单调递增栈为例for(遍历需要入栈的数组)&#123;     if( 栈空 || 栈顶元素小于入栈元素)        &#123;         &#x2F;&#x2F;更新结果;         入栈元素入栈;     &#125;     else      &#123;         while( 栈不为空 &amp;&amp; 栈顶元素大于等于入栈元素)         &#123;             栈顶元素出栈;             更新结果;         &#125;         入栈元素入栈;     &#125;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>]]></content>
       
       
+      
+        <tags>
+            
+            <tag> 算法c++ </tag>
+            
+        </tags>
       
     </entry>
     
