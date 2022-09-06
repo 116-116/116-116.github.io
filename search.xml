@@ -4,7 +4,64 @@
   
     
     <entry>
-      <title>tarjan强连通分量</title>
+      <title>字典树</title>
+      <link href="/2022/09/07/lca-shu-lian-bao-fen/"/>
+      <url>/2022/09/07/lca-shu-lian-bao-fen/</url>
+      
+        <content type="html"><![CDATA[<pre class="line-numbers language-none"><code class="language-none">#include&lt;iostream&gt;#include&lt;cstring&gt;using namespace std;const int N&#x3D;500005;int dep[N],fa[N],son[N],siz[N],top[N];int head[N],ed[N*2],nex[2*N],idx;void add(int a,int b)&#123;    ed[idx]&#x3D;b;    nex[idx]&#x3D;head[a];    head[a]&#x3D;idx++;&#125;void dfs1(int x,int dad)&#123;    fa[x]&#x3D;dad;    siz[x]&#x3D;1;    son[x]&#x3D;0;    dep[x]&#x3D;dep[dad]+1;    for(int i&#x3D;head[x];i!&#x3D;-1;i&#x3D;nex[i])    &#123;        if(ed[i]&#x3D;&#x3D;dad)continue;        dfs1(ed[i],x);        siz[x]+&#x3D;siz[ed[i]];        if(siz[son[x]]&lt;siz[ed[i]])son[x]&#x3D;ed[i];    &#125;   &#125;void dfs2(int x,int topx)&#123;    top[x]&#x3D;topx;    if(son[x])dfs2(son[x],topx);    else    return;    for(int i&#x3D;head[x];i!&#x3D;-1;i&#x3D;nex[i])        if(ed[i]!&#x3D;fa[x]&amp;&amp;ed[i]!&#x3D;son[x])dfs2(ed[i],ed[i]);&#125;int lca(int x,int y)&#123;    while(top[x]!&#x3D;top[y])    &#123;        if(dep[top[x]]&lt;dep[top[y]])            swap(x,y);        x&#x3D;fa[top[x]];    &#125;    return dep[x]&lt;dep[y]?x:y;&#125;int n,m,s,x,y;int main()&#123;    memset(head,-1,sizeof head);    scanf(&quot;%d%d%d&quot;,&amp;n,&amp;m,&amp;s);    for(int i&#x3D;1;i&lt;n;++i)    &#123;        scanf(&quot;%d%d&quot;,&amp;x,&amp;y);        add(x,y);        add(y,x);    &#125;    dfs1(s,0);    dfs2(s,s);    while(m--)    &#123;        scanf(&quot;%d%d&quot;,&amp;x,&amp;y);        printf(&quot;%d\n&quot;,lca(x,y));    &#125;    return 0;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 算法c++ </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>笛卡尔树</title>
+      <link href="/2022/09/02/di-qia-er-shu/"/>
+      <url>/2022/09/02/di-qia-er-shu/</url>
+      
+        <content type="html"><![CDATA[<pre class="line-numbers language-none"><code class="language-none">#include&lt;iostream&gt;#include&lt;stack&gt;#define re register#define il inline#define LL long longusing namespace std;const int N&#x3D;10000010;int a[N],n,k;typedef struct &#123;    int fa,lson,rson,val;&#125;T;T tree[N];template&lt;typename T&gt;il void read(T &amp;ff)&#123;    T rr&#x3D;1;ff&#x3D;0;re char ch&#x3D;getchar();    while(!isdigit(ch))&#123;if(ch&#x3D;&#x3D;&#39;-&#39;)rr&#x3D;-1;ch&#x3D;getchar();&#125;    while(isdigit(ch))&#123;ff&#x3D;(ff&lt;&lt;1)+(ff&lt;&lt;3)+(ch^48);ch&#x3D;getchar();&#125;    ff*&#x3D;rr;&#125;void build()&#123;    stack&lt;int&gt;st;    st.push(1);    tree[1].val&#x3D;a[1];    for(int i&#x3D;2;i&lt;&#x3D;n;++i)    &#123;        if(a[st.top()]&gt;a[i])        &#123;            while(!st.empty()&amp;&amp;a[st.top()]&gt;a[i])k&#x3D;st.top(),st.pop();            tree[i].lson&#x3D;k;            tree[i].fa&#x3D;tree[k].fa;            tree[tree[k].fa].rson&#x3D;i;            tree[k].fa&#x3D;i;        &#125;        else        &#123;            tree[i].fa&#x3D;st.top();            tree[st.top()].rson&#x3D;i;        &#125;        tree[i].val&#x3D;a[i];        st.push(i);    &#125;&#125;int main()&#123;    read(n);    for(int i&#x3D;1;i&lt;&#x3D;n;++i)        read(a[i]);    build();    long long L&#x3D;0,R&#x3D;0;&#x2F;&#x2F;     for(int i&#x3D;1;i&lt;&#x3D;n;++i)&#x2F;&#x2F;     printf(&quot;%lld %lld\n&quot;,tree[i].lson,tree[i].rson);      for(int i&#x3D;1;i&lt;&#x3D;n;++i)        L^&#x3D;1LL*i*(tree[i].lson+1),R^&#x3D;1LL*i*(tree[i].rson+1);     printf(&quot;%lld %lld\n&quot;,L,R);    return 0;&#125;#include&lt;iostream&gt;#include&lt;stack&gt;#define re register#define il inline#define LL long longusing namespace std;const int N&#x3D;10000010;int a[N],n,k,st[N],top;typedef struct &#123;    int fa,lson,rson,val;&#125;T;T tree[N];void build()&#123;    for(int i&#x3D;1;i&lt;&#x3D;n;++i)    &#123;        k&#x3D;top;        while(k&amp;&amp;a[st[k]]&gt;a[i])--k;        if(k)tree[st[k]].rson&#x3D;i;        if(k&lt;top)tree[i].lson&#x3D;st[k+1];        st[++k]&#x3D;i;        top&#x3D;k;    &#125;&#125;template&lt;typename T&gt;il void read(T &amp;ff)&#123;    T rr&#x3D;1;ff&#x3D;0;re char ch&#x3D;getchar();    while(!isdigit(ch))&#123;if(ch&#x3D;&#x3D;&#39;-&#39;)rr&#x3D;-1;ch&#x3D;getchar();&#125;    while(isdigit(ch))&#123;ff&#x3D;(ff&lt;&lt;1)+(ff&lt;&lt;3)+(ch^48);ch&#x3D;getchar();&#125;    ff*&#x3D;rr;&#125;int main()&#123;    read(n);    for(int i&#x3D;1;i&lt;&#x3D;n;++i)        read(a[i]);    build();    long long L&#x3D;0,R&#x3D;0;    for(int i&#x3D;1;i&lt;&#x3D;n;++i)        L^&#x3D;1LL*i*(tree[i].lson+1),R^&#x3D;1LL*i*(tree[i].rson+1);     printf(&quot;%lld %lld\n&quot;,L,R);    return 0;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 算法c++ </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>lca-倍增</title>
+      <link href="/2022/09/02/lca-bei-zeng/"/>
+      <url>/2022/09/02/lca-bei-zeng/</url>
+      
+        <content type="html"><![CDATA[<pre class="line-numbers language-none"><code class="language-none">#include &lt;bits&#x2F;stdc++.h&gt;using namespace std;const int N &#x3D; 550000 + 5;vector&lt;int&gt; son[N];int T, n, m, dep[N], fa[N][30], a, b,vis[N]; &#x2F;&#x2F;后面的20代表2的多少次方  根据题意更改 a父节点，b子节点void dfs(int x, int pre) &#x2F;&#x2F; x为dfs节点 pre为其父节点&#123;    if(vis[x])        return ;    vis[x]&#x3D;1;    dep[x] &#x3D; dep[pre] + 1; &#x2F;&#x2F;计算x节点的深度    fa[x][0] &#x3D; pre;        &#x2F;&#x2F; x向上走2^0&#x3D;1步为其父节点    for (int i &#x3D; 1; (1 &lt;&lt; i) &lt;&#x3D; n; ++i)        fa[x][i] &#x3D; fa[fa[x][i - 1]][i - 1]; &#x2F;&#x2F; x向上走2^i步等同于x向上走2^(i-1)步后再走2^(i-1)步    for (int i &#x3D; 0; i &lt; son[x].size(); ++i) &#x2F;&#x2F;递归处理x的子节点        dfs(son[x][i], x);&#125;int up(int x, int d) &#x2F;&#x2F;计算x节点向上走d步的节点&#123;    int ret &#x3D; x;                        &#x2F;&#x2F;将返回值初始化为x    for (int i &#x3D; 0; (1 &lt;&lt; i) &lt;&#x3D; n; ++i) &#x2F;&#x2F;考虑d的二进制表示为1的位置，用之前预处理的值向上跳跃        if (((1 &lt;&lt; i) &amp; d) !&#x3D; 0)            ret &#x3D; fa[ret][i];    return ret;&#125;int lca(int x, int y) &#x2F;&#x2F;计算x，y的lca&#123;    if (dep[x] &lt; dep[y]) &#x2F;&#x2F;保证x为深度大的节点        swap(x, y);    x &#x3D; up(x, dep[x] - dep[y]); &#x2F;&#x2F;将x，y的深度跳为一致    if (x &#x3D;&#x3D; y)        return x;    int maxd&#x3D;log2(dep[x])+1;    for (int i &#x3D; maxd; i &gt;&#x3D; 0; --i) &#x2F;&#x2F; 19代表2的19次方 可根据题意更改        if (fa[x][i] !&#x3D; fa[y][i])            x &#x3D; fa[x][i], y &#x3D; fa[y][i];    return fa[x][0];&#125;int main()&#123;    int temp;    scanf(&quot;%d%d%d&quot;, &amp;n, &amp;m, &amp;temp);    for (int i &#x3D; 1; i &lt;&#x3D; n; ++i)        son[i].clear();    for (int i &#x3D; 1; i &lt; n; ++i)    &#123;        scanf(&quot;%d%d&quot;, &amp;a, &amp;b);        son[a].push_back(b);        son[b].push_back(a);    &#125;    dep[0] &#x3D; -1;    dfs(temp, 0);    while (m--)    &#123;        scanf(&quot;%d%d&quot;, &amp;a, &amp;b);        printf(&quot;%d\n&quot;, lca(a, b));        &#x2F;&#x2F;printf(&quot;%d\n&quot;,dep[a]+dep[b]-2*dep[lca(a,b)]);    &#125;    return 0;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>]]></content>
+      
+      
+      
+        <tags>
+            
+            <tag> 算法c++ </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>lca-欧拉序rmq</title>
       <link href="/2022/09/01/lca-rmq-ou-la-xu/"/>
       <url>/2022/09/01/lca-rmq-ou-la-xu/</url>
       
