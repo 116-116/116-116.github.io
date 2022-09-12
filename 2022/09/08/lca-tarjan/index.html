@@ -4,12 +4,11 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="lca-树链刨分, 咳咳">
-    <meta name="description" content="#include&amp;lt;iostream&amp;gt;
-#include&amp;lt;cstring&amp;gt;
+    <meta name="keywords" content="lca-tarjan, 咳咳">
+    <meta name="description" content="#include&amp;lt;bits&amp;#x2F;stdc++.h&amp;gt;
 using namespace std;
-const int N&amp;#x3D;500005;
-int dep[N],fa[N],son[N],s">
+const int N&amp;#x3D;10000025;
+int idx,head[N],ed[2*N],nex[2*N],val[">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -23,7 +22,7 @@ int dep[N],fa[N],son[N],s">
 
     
 
-    <title>lca-树链刨分 | 咳咳</title>
+    <title>lca-tarjan | 咳咳</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
@@ -250,12 +249,12 @@ int dep[N],fa[N],son[N],s">
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/6.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/19.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">lca-树链刨分</h1>
+                    <h1 class="description center-align post-title">lca-tarjan</h1>
                 </div>
             </div>
         </div>
@@ -387,7 +386,7 @@ int dep[N],fa[N],son[N],s">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-09-07
+                    2022-09-08
                 </div>
                 
 
@@ -396,14 +395,14 @@ int dep[N],fa[N],son[N],s">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    303
+                    375
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    1 分
+                    2 分
                 </div>
                 
 
@@ -426,71 +425,84 @@ int dep[N],fa[N],son[N],s">
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <pre class="line-numbers language-none"><code class="language-none">#include&lt;iostream&gt;
-#include&lt;cstring&gt;
+                <pre class="line-numbers language-none"><code class="language-none">#include&lt;bits&#x2F;stdc++.h&gt;
 using namespace std;
-const int N&#x3D;500005;
-int dep[N],fa[N],son[N],siz[N],top[N];
-int head[N],ed[N*2],nex[2*N],idx;
-void add(int a,int b)
+const int N&#x3D;10000025;
+int idx,head[N],ed[2*N],nex[2*N],val[N*2],head1[N],ed1[2*N],nex1[2*N],pos[N*2],idx1;
+void add(int a,int b,int c)
 &#123;
     ed[idx]&#x3D;b;
     nex[idx]&#x3D;head[a];
+    val[idx]&#x3D;c;
     head[a]&#x3D;idx++;
 &#125;
-void dfs1(int x,int dad)
+void add1(int a,int b,int c)
 &#123;
-    fa[x]&#x3D;dad;
-    siz[x]&#x3D;1;
-    son[x]&#x3D;0;
-    dep[x]&#x3D;dep[dad]+1;
-    for(int i&#x3D;head[x];i!&#x3D;-1;i&#x3D;nex[i])
-    &#123;
-        if(ed[i]&#x3D;&#x3D;dad)continue;
-        dfs1(ed[i],x);
-        siz[x]+&#x3D;siz[ed[i]];
-        if(siz[son[x]]&lt;siz[ed[i]])son[x]&#x3D;ed[i];
-    &#125;   
+    ed1[idx1]&#x3D;b;
+    nex1[idx1]&#x3D;head1[a];
+    pos[idx1]&#x3D;c;
+    head1[a]&#x3D;idx1++;
 &#125;
-void dfs2(int x,int topx)
+int fa[N],dis[N],vis[N],f[N],m,n,ans[N];
+void dfs(int rt)
 &#123;
-    top[x]&#x3D;topx;
-    if(son[x])dfs2(son[x],topx);
-    else    return;
-    for(int i&#x3D;head[x];i!&#x3D;-1;i&#x3D;nex[i])
-        if(ed[i]!&#x3D;fa[x]&amp;&amp;ed[i]!&#x3D;son[x])dfs2(ed[i],ed[i]);
-&#125;
-int lca(int x,int y)
-&#123;
-    while(top[x]!&#x3D;top[y])
+    f[rt]&#x3D;1;
+    for(int i&#x3D;head[rt];i!&#x3D;-1;i&#x3D;nex[i])
     &#123;
-        if(dep[top[x]]&lt;dep[top[y]])
-            swap(x,y);
-        x&#x3D;fa[top[x]];
+        if(!f[ed[i]])
+        &#123;
+            dis[ed[i]]&#x3D;dis[rt]+val[i];
+            dfs(ed[i]);
+        &#125;
     &#125;
-    return dep[x]&lt;dep[y]?x:y;
 &#125;
-int n,m,s,x,y;
+int find(int x)
+&#123;
+    return fa[x]&#x3D;&#x3D;x?x:fa[x]&#x3D;find(fa[x]);
+&#125;
+void lca_tarjan(int rt)
+&#123;
+    f[rt]&#x3D;1;
+    for(int i&#x3D;head[rt];i!&#x3D;-1;i&#x3D;nex[i])
+    &#123;
+        if(f[ed[i]])continue;
+        lca_tarjan(ed[i]);
+        fa[find(ed[i])]&#x3D;rt;
+    &#125;
+    vis[rt]&#x3D;1;
+    for(int i&#x3D;head1[rt];i!&#x3D;-1;i&#x3D;nex1[i])
+    &#123;
+        if(vis[ed1[i]])
+            ans[pos[i]]&#x3D;find(ed1[i]);
+    &#125;
+&#125;
 int main()
 &#123;
-    memset(head,-1,sizeof head);
+    int s,x,y;
     scanf(&quot;%d%d%d&quot;,&amp;n,&amp;m,&amp;s);
+    memset(head ,-1,(n+20)*sizeof (head[0]));
+    memset(head1 ,-1,(n+20)*sizeof (head1[0]));
+    for(int i&#x3D;1;i&lt;&#x3D;n;++i)
+        fa[i]&#x3D;i;
     for(int i&#x3D;1;i&lt;n;++i)
     &#123;
         scanf(&quot;%d%d&quot;,&amp;x,&amp;y);
-        add(x,y);
-        add(y,x);
+        add(x,y,1);
+        add(y,x,1);
     &#125;
-    dfs1(s,0);
-    dfs2(s,s);
-    while(m--)
+    for(int i&#x3D;1;i&lt;&#x3D;m;++i)
     &#123;
         scanf(&quot;%d%d&quot;,&amp;x,&amp;y);
-        printf(&quot;%d\n&quot;,lca(x,y));
+        add1(x,y,i);
+        add1(y,x,i);
     &#125;
+    dfs(s);
+    memset(f,0,(n+20)*sizeof f[0]);
+    lca_tarjan(s);
+    for(int i&#x3D;1;i&lt;&#x3D;m;++i)
+        printf(&quot;%d\n&quot;,ans[i]);
     return 0;
-&#125;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
                 
             </div>
             <hr/>
@@ -516,7 +528,7 @@ int main()
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://116-116.github.io/2022/09/07/lca-shu-lian-bao-fen/">http://116-116.github.io/2022/09/07/lca-shu-lian-bao-fen/</a>
+                    <a href="http://116-116.github.io/2022/09/08/lca-tarjan/">http://116-116.github.io/2022/09/08/lca-tarjan/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -629,13 +641,13 @@ int main()
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2022/09/08/lca-tarjan/">
+                <a href="/2022/09/13/er-fen-tu-zui-da-pi-pei-dinic/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="lca-tarjan">
+                        <img src="/medias/featureimages/12.jpg" class="responsive-img" alt="哈希">
                         
-                        <span class="card-title">lca-tarjan</span>
+                        <span class="card-title">哈希</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -646,7 +658,7 @@ int main()
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2022-09-08
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-09-13
                         </span>
                         <span class="publish-author">
                             
@@ -659,8 +671,8 @@ int main()
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E7%AE%97%E6%B3%95c/">
-                        <span class="chip bg-color">算法c++</span>
+                    <a href="/tags/%E4%BA%8C%E5%88%86%E5%9B%BE%E6%9C%80%E5%A4%A7%E5%8C%B9%E9%85%8D-dinic/">
+                        <span class="chip bg-color">二分图最大匹配-dinic</span>
                     </a>
                     
                 </div>
@@ -674,13 +686,13 @@ int main()
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/09/02/di-qia-er-shu/">
+                <a href="/2022/09/07/lca-shu-lian-bao-fen/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="笛卡尔树">
+                        <img src="/medias/featureimages/6.jpg" class="responsive-img" alt="lca-树链刨分">
                         
-                        <span class="card-title">笛卡尔树</span>
+                        <span class="card-title">lca-树链刨分</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -691,7 +703,7 @@ int main()
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-09-02
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-09-07
                             </span>
                         <span class="publish-author">
                             

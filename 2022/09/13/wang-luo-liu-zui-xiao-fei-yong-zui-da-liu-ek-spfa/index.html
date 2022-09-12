@@ -4,12 +4,12 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="lca-树链刨分, 咳咳">
-    <meta name="description" content="#include&amp;lt;iostream&amp;gt;
-#include&amp;lt;cstring&amp;gt;
+    <meta name="keywords" content="网络流-最小费用最大流-ek+spfa, 咳咳">
+    <meta name="description" content="#include&amp;lt;bits&amp;#x2F;stdc++.h&amp;gt;
+#define ll  long long
 using namespace std;
-const int N&amp;#x3D;500005;
-int dep[N],fa[N],son[N],s">
+const int N &amp;#x3D; 5100,M&amp;#x3D;100000;
+ll ">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -23,7 +23,7 @@ int dep[N],fa[N],son[N],s">
 
     
 
-    <title>lca-树链刨分 | 咳咳</title>
+    <title>网络流-最小费用最大流-ek+spfa | 咳咳</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
@@ -250,12 +250,12 @@ int dep[N],fa[N],son[N],s">
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/6.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/21.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">lca-树链刨分</h1>
+                    <h1 class="description center-align post-title">网络流-最小费用最大流-ek+spfa</h1>
                 </div>
             </div>
         </div>
@@ -387,7 +387,7 @@ int dep[N],fa[N],son[N],s">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-09-07
+                    2022-09-13
                 </div>
                 
 
@@ -396,14 +396,14 @@ int dep[N],fa[N],son[N],s">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    303
+                    441
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    1 分
+                    2 分
                 </div>
                 
 
@@ -426,71 +426,88 @@ int dep[N],fa[N],son[N],s">
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <pre class="line-numbers language-none"><code class="language-none">#include&lt;iostream&gt;
-#include&lt;cstring&gt;
+                <pre class="line-numbers language-none"><code class="language-none">#include&lt;bits&#x2F;stdc++.h&gt;
+#define ll  long long
 using namespace std;
-const int N&#x3D;500005;
-int dep[N],fa[N],son[N],siz[N],top[N];
-int head[N],ed[N*2],nex[2*N],idx;
-void add(int a,int b)
+const int N &#x3D; 5100,M&#x3D;100000;
+ll head[N], ed[M * 2], nex[M * 2], idx &#x3D; 1, val[M * 2],w[M*2];
+ll pre[N], mf[N]; &#x2F;&#x2F;点i的前驱边号，s-&gt;v路径的流量上限
+ll dis[N];
+int n,s,t,m;
+int a, b;
+ll c, d;
+int vis[N];
+void add(int a,int b,ll c,ll d)
 &#123;
-    ed[idx]&#x3D;b;
-    nex[idx]&#x3D;head[a];
-    head[a]&#x3D;idx++;
+    ed[++idx] &#x3D; b;
+    val[idx] &#x3D; c;
+    w[idx] &#x3D; d;
+    nex[idx] &#x3D; head[a];
+    head[a] &#x3D; idx;
 &#125;
-void dfs1(int x,int dad)
+bool spfa()&#x2F;&#x2F;找最小花费的增广路，每次找的一条路中每条边流量相同，花费&#x3D;所有边的花费之和*flow
 &#123;
-    fa[x]&#x3D;dad;
-    siz[x]&#x3D;1;
-    son[x]&#x3D;0;
-    dep[x]&#x3D;dep[dad]+1;
-    for(int i&#x3D;head[x];i!&#x3D;-1;i&#x3D;nex[i])
+    memset(mf, 0, sizeof mf);
+    memset(dis, 0x3f3f, (n+5)*sizeof dis[0]);
+    queue&lt;int&gt; q;
+    q.push(s);
+    mf[s] &#x3D; 1e18;
+    dis[s] &#x3D; 0;
+    vis[s] &#x3D; 1;
+    while(q.size())
     &#123;
-        if(ed[i]&#x3D;&#x3D;dad)continue;
-        dfs1(ed[i],x);
-        siz[x]+&#x3D;siz[ed[i]];
-        if(siz[son[x]]&lt;siz[ed[i]])son[x]&#x3D;ed[i];
-    &#125;   
-&#125;
-void dfs2(int x,int topx)
-&#123;
-    top[x]&#x3D;topx;
-    if(son[x])dfs2(son[x],topx);
-    else    return;
-    for(int i&#x3D;head[x];i!&#x3D;-1;i&#x3D;nex[i])
-        if(ed[i]!&#x3D;fa[x]&amp;&amp;ed[i]!&#x3D;son[x])dfs2(ed[i],ed[i]);
-&#125;
-int lca(int x,int y)
-&#123;
-    while(top[x]!&#x3D;top[y])
-    &#123;
-        if(dep[top[x]]&lt;dep[top[y]])
-            swap(x,y);
-        x&#x3D;fa[top[x]];
+        int u &#x3D; q.front();
+        q.pop();
+        vis[u] &#x3D; 0;
+        for (int i &#x3D; head[u]; i;i&#x3D;nex[i])
+        &#123;
+            int v &#x3D; ed[i];
+            if(dis[v]&gt;dis[u]+w[i]&amp;&amp;val[i])
+            &#123;
+                dis[v] &#x3D; dis[u] + w[i];&#x2F;&#x2F;更新最短路
+                mf[v] &#x3D; min(mf[u], val[i]);&#x2F;&#x2F;更新最大流量
+                pre[v] &#x3D; i;&#x2F;&#x2F;前驱边
+                if(!vis[v])
+                &#123;
+                    q.push(v);
+                    vis[v] &#x3D; 1;
+                &#125;
+            &#125;
+        &#125;
     &#125;
-    return dep[x]&lt;dep[y]?x:y;
+    return mf[t]&gt;0;
 &#125;
-int n,m,s,x,y;
+ll flow, cost;
+void ek()
+&#123;
+    while(spfa())
+    &#123;
+        int v &#x3D; t;
+        while(v!&#x3D;s)
+        &#123;
+            int i &#x3D; pre[v];
+            val[i] -&#x3D; mf[t];
+            val[i ^ 1] +&#x3D; mf[t];&#x2F;&#x2F;更新残留网
+            v &#x3D; ed[i ^ 1];
+        &#125;
+        flow +&#x3D; mf[t];
+        cost +&#x3D; mf[t] *dis[t];&#x2F;&#x2F;累加费用和可行流
+    &#125;
+&#125;
 int main()
 &#123;
-    memset(head,-1,sizeof head);
-    scanf(&quot;%d%d%d&quot;,&amp;n,&amp;m,&amp;s);
-    for(int i&#x3D;1;i&lt;n;++i)
+    scanf(&quot;%d%d%d%d&quot;, &amp;n, &amp;m, &amp;s, &amp;t);
+    for (int i &#x3D; 1; i &lt;&#x3D; m;++i)
     &#123;
-        scanf(&quot;%d%d&quot;,&amp;x,&amp;y);
-        add(x,y);
-        add(y,x);
+        scanf(&quot;%d%d%d%d&quot;, &amp;a, &amp;b, &amp;c,&amp;d);
+        add(a, b, c,d);
+        add(b, a, 0,-d);
     &#125;
-    dfs1(s,0);
-    dfs2(s,s);
-    while(m--)
-    &#123;
-        scanf(&quot;%d%d&quot;,&amp;x,&amp;y);
-        printf(&quot;%d\n&quot;,lca(x,y));
-    &#125;
+    ek();
+    cout &lt;&lt; flow &lt;&lt; &#39; &#39; &lt;&lt; cost &lt;&lt; endl;
+    &#x2F;&#x2F; system(&quot;pause&quot;);
     return 0;
-&#125;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
                 
             </div>
             <hr/>
@@ -516,7 +533,7 @@ int main()
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://116-116.github.io/2022/09/07/lca-shu-lian-bao-fen/">http://116-116.github.io/2022/09/07/lca-shu-lian-bao-fen/</a>
+                    <a href="http://116-116.github.io/2022/09/13/wang-luo-liu-zui-xiao-fei-yong-zui-da-liu-ek-spfa/">http://116-116.github.io/2022/09/13/wang-luo-liu-zui-xiao-fei-yong-zui-da-liu-ek-spfa/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -629,13 +646,13 @@ int main()
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2022/09/08/lca-tarjan/">
+                <a href="/2022/09/13/xiong-ya-li-er-fen-tu-zui-da-pi-pei/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="lca-tarjan">
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="匈牙利二分最大匹配">
                         
-                        <span class="card-title">lca-tarjan</span>
+                        <span class="card-title">匈牙利二分最大匹配</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -646,7 +663,7 @@ int main()
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2022-09-08
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-09-13
                         </span>
                         <span class="publish-author">
                             
@@ -674,13 +691,13 @@ int main()
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/09/02/di-qia-er-shu/">
+                <a href="/2022/09/13/wang-luo-liu-zui-da-liu-ek/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="笛卡尔树">
+                        <img src="/medias/featureimages/12.jpg" class="responsive-img" alt="网络流最大流">
                         
-                        <span class="card-title">笛卡尔树</span>
+                        <span class="card-title">网络流最大流</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -691,7 +708,7 @@ int main()
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-09-02
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-09-13
                             </span>
                         <span class="publish-author">
                             

@@ -4,12 +4,12 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="lca-树链刨分, 咳咳">
-    <meta name="description" content="#include&amp;lt;iostream&amp;gt;
-#include&amp;lt;cstring&amp;gt;
+    <meta name="keywords" content="匈牙利二分最大匹配, 咳咳">
+    <meta name="description" content="#include &amp;lt;bits&amp;#x2F;stdc++.h&amp;gt;
+#define ll long long
 using namespace std;
-const int N&amp;#x3D;500005;
-int dep[N],fa[N],son[N],s">
+const int N &amp;#x3D; 50010;
+int n,m,p[N],vis">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -23,7 +23,7 @@ int dep[N],fa[N],son[N],s">
 
     
 
-    <title>lca-树链刨分 | 咳咳</title>
+    <title>匈牙利二分最大匹配 | 咳咳</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
@@ -250,12 +250,12 @@ int dep[N],fa[N],son[N],s">
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/6.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/5.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">lca-树链刨分</h1>
+                    <h1 class="description center-align post-title">匈牙利二分最大匹配</h1>
                 </div>
             </div>
         </div>
@@ -387,7 +387,7 @@ int dep[N],fa[N],son[N],s">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-09-07
+                    2022-09-13
                 </div>
                 
 
@@ -396,14 +396,14 @@ int dep[N],fa[N],son[N],s">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    303
+                    386
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    1 分
+                    2 分
                 </div>
                 
 
@@ -426,71 +426,110 @@ int dep[N],fa[N],son[N],s">
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <pre class="line-numbers language-none"><code class="language-none">#include&lt;iostream&gt;
-#include&lt;cstring&gt;
+                <pre class="line-numbers language-none"><code class="language-none">#include &lt;bits&#x2F;stdc++.h&gt;
+#define ll long long
 using namespace std;
-const int N&#x3D;500005;
-int dep[N],fa[N],son[N],siz[N],top[N];
-int head[N],ed[N*2],nex[2*N],idx;
+const int N &#x3D; 50010;
+int n,m,p[N],vis[N];
+int head[N],ed[N*2],nex[N*2],idx;
 void add(int a,int b)
 &#123;
     ed[idx]&#x3D;b;
     nex[idx]&#x3D;head[a];
     head[a]&#x3D;idx++;
 &#125;
-void dfs1(int x,int dad)
+bool pipei(int i)
 &#123;
-    fa[x]&#x3D;dad;
-    siz[x]&#x3D;1;
-    son[x]&#x3D;0;
-    dep[x]&#x3D;dep[dad]+1;
-    for(int i&#x3D;head[x];i!&#x3D;-1;i&#x3D;nex[i])
+    for(int j&#x3D;head[i];j!&#x3D;-1;j&#x3D;nex[j])
     &#123;
-        if(ed[i]&#x3D;&#x3D;dad)continue;
-        dfs1(ed[i],x);
-        siz[x]+&#x3D;siz[ed[i]];
-        if(siz[son[x]]&lt;siz[ed[i]])son[x]&#x3D;ed[i];
-    &#125;   
-&#125;
-void dfs2(int x,int topx)
-&#123;
-    top[x]&#x3D;topx;
-    if(son[x])dfs2(son[x],topx);
-    else    return;
-    for(int i&#x3D;head[x];i!&#x3D;-1;i&#x3D;nex[i])
-        if(ed[i]!&#x3D;fa[x]&amp;&amp;ed[i]!&#x3D;son[x])dfs2(ed[i],ed[i]);
-&#125;
-int lca(int x,int y)
-&#123;
-    while(top[x]!&#x3D;top[y])
-    &#123;
-        if(dep[top[x]]&lt;dep[top[y]])
-            swap(x,y);
-        x&#x3D;fa[top[x]];
-    &#125;
-    return dep[x]&lt;dep[y]?x:y;
-&#125;
-int n,m,s,x,y;
-int main()
-&#123;
-    memset(head,-1,sizeof head);
-    scanf(&quot;%d%d%d&quot;,&amp;n,&amp;m,&amp;s);
-    for(int i&#x3D;1;i&lt;n;++i)
-    &#123;
-        scanf(&quot;%d%d&quot;,&amp;x,&amp;y);
-        add(x,y);
-        add(y,x);
-    &#125;
-    dfs1(s,0);
-    dfs2(s,s);
-    while(m--)
-    &#123;
-        scanf(&quot;%d%d&quot;,&amp;x,&amp;y);
-        printf(&quot;%d\n&quot;,lca(x,y));
+        if(!vis[ed[j]])
+        &#123;
+            ++vis[ed[j]];
+            if(!p[ed[j]]||pipei(p[ed[j]]))
+            &#123;
+                p[ed[j]]&#x3D;i;
+                return 1;
+            &#125;
+        &#125;
     &#125;
     return 0;
 &#125;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+int f()
+&#123;
+    int ans&#x3D;0;
+    for(int i&#x3D;1;i&lt;&#x3D;n;++i)
+    &#123;
+        memset(vis,0,(n+2)*sizeof vis[0]);
+        if(pipei(i))ans++;
+    &#125;
+    return ans;
+&#125;
+int main()
+&#123;
+    memset(head,-1,sizeof head);
+    int e,a,b;
+    scanf(&quot;%d%d%d&quot;,&amp;n,&amp;m,&amp;e);
+    for(int i&#x3D;1;i&lt;&#x3D;e;++i)
+    &#123;
+        scanf(&quot;%d%d&quot;,&amp;a,&amp;b);
+        add(a,b);
+    &#125;
+    cout&lt;&lt;f()&lt;&lt;endl;
+    return 0;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<pre class="line-numbers language-none"><code class="language-none">#include &lt;bits&#x2F;stdc++.h&gt;
+#define ll long long
+using namespace std;
+const int N &#x3D; 250;
+int n, m, p[N], vis[N],a[N][N];
+bool pipei(int i)
+&#123;
+    for (int j &#x3D; 1; j &lt;&#x3D; n; ++j)
+    &#123;
+        if (a[i][j]&amp;&amp;!vis[j])
+        &#123;
+            ++vis[j];
+            if (!p[j] || pipei(p[j]))
+            &#123;
+                p[j] &#x3D; i;
+                return 1;
+            &#125;
+        &#125;
+    &#125;
+    return 0;
+&#125;
+int f()
+&#123;
+    int ans &#x3D; 0;
+    for (int i &#x3D; 1; i &lt;&#x3D; n; ++i)
+    &#123;
+        memset(vis, 0, (n + 2) * sizeof vis[0]);
+        if (pipei(i))
+            ans++;
+    &#125;
+    return ans;
+&#125;
+int main()
+&#123;
+    int t;
+    scanf(&quot;%d&quot;, &amp;t);
+    while (t--)
+    &#123;
+        memset(p,0,sizeof p);
+        scanf(&quot;%d&quot;,&amp;n);
+        for (int i &#x3D; 1; i &lt;&#x3D; n; ++i)
+        &#123;
+            for(int j&#x3D;1;j&lt;&#x3D;n;++j)
+                scanf(&quot;%d&quot;,&amp;a[i][j]);
+        &#125;
+        if(f()&#x3D;&#x3D;n)cout&lt;&lt;&quot;Yes\n&quot;;
+        else cout&lt;&lt;&quot;No\n&quot;;
+    &#125;
+    return 0;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
                 
             </div>
             <hr/>
@@ -516,7 +555,7 @@ int main()
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://116-116.github.io/2022/09/07/lca-shu-lian-bao-fen/">http://116-116.github.io/2022/09/07/lca-shu-lian-bao-fen/</a>
+                    <a href="http://116-116.github.io/2022/09/13/xiong-ya-li-er-fen-tu-zui-da-pi-pei/">http://116-116.github.io/2022/09/13/xiong-ya-li-er-fen-tu-zui-da-pi-pei/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -629,13 +668,13 @@ int main()
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2022/09/08/lca-tarjan/">
+                <a href="/2022/09/13/er-fen-tu-pan-ding-ran-se-fa/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="lca-tarjan">
+                        <img src="/medias/featureimages/12.jpg" class="responsive-img" alt="哈希">
                         
-                        <span class="card-title">lca-tarjan</span>
+                        <span class="card-title">哈希</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -646,7 +685,7 @@ int main()
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2022-09-08
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-09-13
                         </span>
                         <span class="publish-author">
                             
@@ -659,8 +698,8 @@ int main()
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E7%AE%97%E6%B3%95c/">
-                        <span class="chip bg-color">算法c++</span>
+                    <a href="/tags/%E4%BA%8C%E5%88%86%E5%9B%BE%E5%88%A4%E5%AE%9A-%E6%9F%93%E8%89%B2%E6%B3%95/">
+                        <span class="chip bg-color">二分图判定-染色法</span>
                     </a>
                     
                 </div>
@@ -674,13 +713,13 @@ int main()
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/09/02/di-qia-er-shu/">
+                <a href="/2022/09/13/wang-luo-liu-zui-xiao-fei-yong-zui-da-liu-ek-spfa/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="笛卡尔树">
+                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="网络流-最小费用最大流-ek+spfa">
                         
-                        <span class="card-title">笛卡尔树</span>
+                        <span class="card-title">网络流-最小费用最大流-ek+spfa</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -691,7 +730,7 @@ int main()
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-09-02
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-09-13
                             </span>
                         <span class="publish-author">
                             

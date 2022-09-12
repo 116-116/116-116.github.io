@@ -4,12 +4,12 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="lca-树链刨分, 咳咳">
-    <meta name="description" content="#include&amp;lt;iostream&amp;gt;
-#include&amp;lt;cstring&amp;gt;
+    <meta name="keywords" content="哈希, 咳咳">
+    <meta name="description" content="#include &amp;lt;bits&amp;#x2F;stdc++.h&amp;gt;
+#define ll long long
 using namespace std;
-const int N&amp;#x3D;500005;
-int dep[N],fa[N],son[N],s">
+const int M &amp;#x3D; 1e5, N &amp;#x3D; 1e5;
+int ">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -23,7 +23,7 @@ int dep[N],fa[N],son[N],s">
 
     
 
-    <title>lca-树链刨分 | 咳咳</title>
+    <title>哈希 | 咳咳</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
@@ -250,12 +250,12 @@ int dep[N],fa[N],son[N],s">
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/6.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/12.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">lca-树链刨分</h1>
+                    <h1 class="description center-align post-title">哈希</h1>
                 </div>
             </div>
         </div>
@@ -371,8 +371,8 @@ int dep[N],fa[N],son[N],s">
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/%E7%AE%97%E6%B3%95c/">
-                                <span class="chip bg-color">算法c++</span>
+                            <a href="/tags/%E4%BA%8C%E5%88%86%E5%9B%BE%E5%88%A4%E5%AE%9A-%E6%9F%93%E8%89%B2%E6%B3%95/">
+                                <span class="chip bg-color">二分图判定-染色法</span>
                             </a>
                         
                     </div>
@@ -387,7 +387,7 @@ int dep[N],fa[N],son[N],s">
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-09-07
+                    2022-09-13
                 </div>
                 
 
@@ -396,7 +396,7 @@ int dep[N],fa[N],son[N],s">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    303
+                    206
                 </div>
                 
 
@@ -426,71 +426,60 @@ int dep[N],fa[N],son[N],s">
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <pre class="line-numbers language-none"><code class="language-none">#include&lt;iostream&gt;
-#include&lt;cstring&gt;
+                <pre class="line-numbers language-none"><code class="language-none">#include &lt;bits&#x2F;stdc++.h&gt;
+#define ll long long
 using namespace std;
-const int N&#x3D;500005;
-int dep[N],fa[N],son[N],siz[N],top[N];
-int head[N],ed[N*2],nex[2*N],idx;
-void add(int a,int b)
+const int M &#x3D; 1e5, N &#x3D; 1e5;
+int head[N], ed[M * 2], nex[M * 2], idx;
+int m, n;
+int color[N];
+void add(int a, int b)
 &#123;
-    ed[idx]&#x3D;b;
-    nex[idx]&#x3D;head[a];
-    head[a]&#x3D;idx++;
+    ed[++idx] &#x3D; b;
+    nex[idx] &#x3D; head[a];
+    head[a] &#x3D; idx;
 &#125;
-void dfs1(int x,int dad)
+bool dfs(int u, int co)
 &#123;
-    fa[x]&#x3D;dad;
-    siz[x]&#x3D;1;
-    son[x]&#x3D;0;
-    dep[x]&#x3D;dep[dad]+1;
-    for(int i&#x3D;head[x];i!&#x3D;-1;i&#x3D;nex[i])
+    color[u] &#x3D; co;
+    for (int i &#x3D; head[u]; i; i &#x3D; nex[i])
     &#123;
-        if(ed[i]&#x3D;&#x3D;dad)continue;
-        dfs1(ed[i],x);
-        siz[x]+&#x3D;siz[ed[i]];
-        if(siz[son[x]]&lt;siz[ed[i]])son[x]&#x3D;ed[i];
-    &#125;   
-&#125;
-void dfs2(int x,int topx)
-&#123;
-    top[x]&#x3D;topx;
-    if(son[x])dfs2(son[x],topx);
-    else    return;
-    for(int i&#x3D;head[x];i!&#x3D;-1;i&#x3D;nex[i])
-        if(ed[i]!&#x3D;fa[x]&amp;&amp;ed[i]!&#x3D;son[x])dfs2(ed[i],ed[i]);
-&#125;
-int lca(int x,int y)
-&#123;
-    while(top[x]!&#x3D;top[y])
-    &#123;
-        if(dep[top[x]]&lt;dep[top[y]])
-            swap(x,y);
-        x&#x3D;fa[top[x]];
-    &#125;
-    return dep[x]&lt;dep[y]?x:y;
-&#125;
-int n,m,s,x,y;
-int main()
-&#123;
-    memset(head,-1,sizeof head);
-    scanf(&quot;%d%d%d&quot;,&amp;n,&amp;m,&amp;s);
-    for(int i&#x3D;1;i&lt;n;++i)
-    &#123;
-        scanf(&quot;%d%d&quot;,&amp;x,&amp;y);
-        add(x,y);
-        add(y,x);
-    &#125;
-    dfs1(s,0);
-    dfs2(s,s);
-    while(m--)
-    &#123;
-        scanf(&quot;%d%d&quot;,&amp;x,&amp;y);
-        printf(&quot;%d\n&quot;,lca(x,y));
+        if (!color[ed[i]])
+        &#123;
+            if (dfs(ed[i], 3 - co))
+                return 1;
+        &#125;
+        else if (color[ed[i]] &#x3D;&#x3D; co)
+            return 1;
     &#125;
     return 0;
 &#125;
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+int main()
+&#123;
+    scanf(&quot;%d%d&quot;, &amp;n, &amp;m);
+    for (int i &#x3D; 1; i &lt;&#x3D; m; ++i)
+    &#123;
+        int a, b;
+        scanf(&quot;%d%d&quot;, &amp;a, &amp;b);
+        add(a, b);
+        add(b, a);
+    &#125;
+    int flag &#x3D; 0;
+    for (int i &#x3D; 1; i &lt;&#x3D; n;++i)
+    &#123;
+        if(!color[i]&amp;&amp;dfs(i,1))
+        &#123;
+            flag &#x3D; 1;
+            break;
+        &#125;
+    &#125;
+    if(flag)
+        cout &lt;&lt; &quot;No\n&quot;;
+    else
+        cout &lt;&lt; &quot;Yes\n&quot;;
+    system(&quot;pause&quot;);
+    return 0;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
                 
             </div>
             <hr/>
@@ -516,7 +505,7 @@ int main()
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://116-116.github.io/2022/09/07/lca-shu-lian-bao-fen/">http://116-116.github.io/2022/09/07/lca-shu-lian-bao-fen/</a>
+                    <a href="http://116-116.github.io/2022/09/13/er-fen-tu-pan-ding-ran-se-fa/">http://116-116.github.io/2022/09/13/er-fen-tu-pan-ding-ran-se-fa/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -554,8 +543,8 @@ int main()
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/%E7%AE%97%E6%B3%95c/">
-                                    <span class="chip bg-color">算法c++</span>
+                                <a href="/tags/%E4%BA%8C%E5%88%86%E5%9B%BE%E5%88%A4%E5%AE%9A-%E6%9F%93%E8%89%B2%E6%B3%95/">
+                                    <span class="chip bg-color">二分图判定-染色法</span>
                                 </a>
                             
                         </div>
@@ -625,17 +614,18 @@ int main()
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
-                <a href="/2022/09/08/lca-tarjan/">
+                <a href="/2022/09/13/er-fen-tu-pan-ding-ran-se-fa/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="lca-tarjan">
+                        <img src="/medias/featureimages/12.jpg" class="responsive-img" alt="哈希">
                         
-                        <span class="card-title">lca-tarjan</span>
+                        <span class="card-title">哈希</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -645,9 +635,9 @@ int main()
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2022-09-08
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-09-13
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -656,11 +646,12 @@ int main()
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/%E7%AE%97%E6%B3%95c/">
-                        <span class="chip bg-color">算法c++</span>
+                    <a href="/tags/%E4%BA%8C%E5%88%86%E5%9B%BE%E5%88%A4%E5%AE%9A-%E6%9F%93%E8%89%B2%E6%B3%95/">
+                        <span class="chip bg-color">二分图判定-染色法</span>
                     </a>
                     
                 </div>
@@ -674,13 +665,13 @@ int main()
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/09/02/di-qia-er-shu/">
+                <a href="/2022/09/13/xiong-ya-li-er-fen-tu-zui-da-pi-pei/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="笛卡尔树">
+                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="匈牙利二分最大匹配">
                         
-                        <span class="card-title">笛卡尔树</span>
+                        <span class="card-title">匈牙利二分最大匹配</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -691,7 +682,7 @@ int main()
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-09-02
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-09-13
                             </span>
                         <span class="publish-author">
                             
