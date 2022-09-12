@@ -4,7 +4,7 @@
   
     
     <entry>
-      <title>哈希</title>
+      <title>二分图判定-染色法</title>
       <link href="/2022/09/13/er-fen-tu-pan-ding-ran-se-fa/"/>
       <url>/2022/09/13/er-fen-tu-pan-ding-ran-se-fa/</url>
       
@@ -14,7 +14,7 @@
       
         <tags>
             
-            <tag> 二分图判定-染色法 </tag>
+            <tag> 算法c++ </tag>
             
         </tags>
       
@@ -91,25 +91,6 @@
         <tags>
             
             <tag> 算法c++ </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>哈希</title>
-      <link href="/2022/09/13/er-fen-tu-zui-da-pi-pei-dinic/"/>
-      <url>/2022/09/13/er-fen-tu-zui-da-pi-pei-dinic/</url>
-      
-        <content type="html"><![CDATA[<pre class="line-numbers language-none"><code class="language-none">#include&lt;bits&#x2F;stdc++.h&gt;#define ll long longusing namespace std;const int N &#x3D; 1100,M &#x3D; 110000;int head[N], nex[M], ed[M], val[M], idx &#x3D; 1;int dep[N], cur[N];int n, m, s, t, e,a,b;void add(int a,int b,int c&#x3D;1)&#123;    ed[++idx] &#x3D; b;    val[idx] &#x3D; c;    nex[idx] &#x3D; head[a];    head[a] &#x3D; idx;&#125;bool bfs()&#123;    memset(dep, 0, sizeof dep[0] * (n+m+5));    queue&lt;int&gt; q;    q.push(s);    dep[s]&#x3D;1;    while(q.size())    &#123;        int u &#x3D; q.front();        q.pop();        for (int i &#x3D; head[u]; i;i&#x3D;nex[i])        &#123;            if(!dep[ed[i]]&amp;&amp;val[i])            &#123;                dep[ed[i]] &#x3D; dep[u] + 1;                if(ed[i]&#x3D;&#x3D;t)                    return 1;                q.push(ed[i]);            &#125;        &#125;    &#125;    return 0;&#125;ll dfs(int u,int mf)&#123;    if(u&#x3D;&#x3D;t)        return (ll)mf;    ll sum &#x3D; 0;    for (int i &#x3D; cur[u]; i;i&#x3D;nex[i])    &#123;        cur[u] &#x3D; i;        if(dep[ed[i]]&#x3D;&#x3D;dep[u]+1&amp;&amp;val[i])        &#123;            ll f&#x3D;dfs(ed[i], min(mf, val[i]));            mf -&#x3D; f;            sum +&#x3D; f;            val[i] -&#x3D; f;            val[i ^ 1] +&#x3D; f;            if(!mf)                break;        &#125;    &#125;    if(!sum)        dep[u] &#x3D; 0;    return sum;&#125;ll dinic()&#123;    ll flow &#x3D; 0;    while(bfs())    &#123;        memcpy(cur, head, (n +m+ 5) * sizeof head[0]);        flow+&#x3D;dfs(s, 1e9);    &#125;    return flow;&#125;int main()&#123;    scanf(&quot;%d%d%d&quot;, &amp;n, &amp;m, &amp;e);    s &#x3D; 0;    t &#x3D; n + m + 1;    for (int i &#x3D; 1; i &lt;&#x3D; e;++i)    &#123;        scanf(&quot;%d%d&quot;, &amp;a, &amp;b);        add(a, b + n, 1);        add(b + n, a, 0);    &#125;    for (int i &#x3D; 1; i &lt;&#x3D; n;++i)    &#123;        add(s,  i, 1);        add(i, s, 0);    &#125;    for (int i &#x3D; 1; i &lt;&#x3D; m;++i)    &#123;        add(n+i,  t, 1);        add(t, n+i, 0);    &#125;    cout &lt;&lt; dinic() &lt;&lt; endl;    &#x2F;&#x2F; system(&quot;pause&quot;);    return 0;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>]]></content>
-      
-      
-      
-        <tags>
-            
-            <tag> 二分图最大匹配-dinic </tag>
             
         </tags>
       
