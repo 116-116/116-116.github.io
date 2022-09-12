@@ -4,12 +4,12 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="网络流最大流-最小割-dinic, 咳咳">
+    <meta name="keywords" content="二分图最大匹配-dinic, 咳咳">
     <meta name="description" content="#include&amp;lt;bits&amp;#x2F;stdc++.h&amp;gt;
-#define ll  long long
+#define ll long long
 using namespace std;
-const int N &amp;#x3D; 210,M&amp;#x3D;5100;
-ll hea">
+const int N &amp;#x3D; 1100,M &amp;#x3D; 110000;
+in">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -23,7 +23,7 @@ ll hea">
 
     
 
-    <title>网络流最大流-最小割-dinic | 咳咳</title>
+    <title>二分图最大匹配-dinic | 咳咳</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/all.min.css">
@@ -250,12 +250,12 @@ ll hea">
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/16.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/3.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">网络流最大流-最小割-dinic</h1>
+                    <h1 class="description center-align post-title">二分图最大匹配-dinic</h1>
                 </div>
             </div>
         </div>
@@ -396,14 +396,14 @@ ll hea">
                 
                 <div class="info-break-policy">
                     <i class="far fa-file-word fa-fw"></i>文章字数:&nbsp;&nbsp;
-                    656
+                    385
                 </div>
                 
 
                 
                 <div class="info-break-policy">
                     <i class="far fa-clock fa-fw"></i>阅读时长:&nbsp;&nbsp;
-                    3 分
+                    2 分
                 </div>
                 
 
@@ -427,15 +427,13 @@ ll hea">
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <pre class="line-numbers language-none"><code class="language-none">#include&lt;bits&#x2F;stdc++.h&gt;
-#define ll  long long
+#define ll long long
 using namespace std;
-const int N &#x3D; 210,M&#x3D;5100;
-ll head[N], ed[M * 2], nex[M * 2], idx &#x3D; 1, val[M * 2]; &#x2F;&#x2F; idx&#x3D;1 使编号从2，3开始  正反边通过^1可得
-ll dep[N],cur[N];&#x2F;&#x2F;dep存深度（层级），防止dfs搜的太深，cur存u点的当前出边
-ll n,s,t,m;
-ll a, b, c;
-int vis[N];&#x2F;&#x2F;记录最小割的集合
-void add(ll a,ll b,ll c)
+const int N &#x3D; 1100,M &#x3D; 110000;
+int head[N], nex[M], ed[M], val[M], idx &#x3D; 1;
+int dep[N], cur[N];
+int n, m, s, t, e,a,b;
+void add(int a,int b,int c&#x3D;1)
 &#123;
     ed[++idx] &#x3D; b;
     val[idx] &#x3D; c;
@@ -444,100 +442,85 @@ void add(ll a,ll b,ll c)
 &#125;
 bool bfs()
 &#123;
-    memset(dep, 0, (n + 2) * sizeof dep[0]);&#x2F;&#x2F;找增广路并重新分层
+    memset(dep, 0, sizeof dep[0] * (n+m+5));
     queue&lt;int&gt; q;
     q.push(s);
-    dep[s] &#x3D; 1;
+    dep[s]&#x3D;1;
     while(q.size())
     &#123;
         int u &#x3D; q.front();
         q.pop();
         for (int i &#x3D; head[u]; i;i&#x3D;nex[i])
         &#123;
-            int v &#x3D; ed[i];
-            if(!dep[v]&amp;&amp;val[i])
+            if(!dep[ed[i]]&amp;&amp;val[i])
             &#123;
-                dep[v] &#x3D; dep[u] + 1;
-                q.push(v);
-                if(v&#x3D;&#x3D;t)
+                dep[ed[i]] &#x3D; dep[u] + 1;
+                if(ed[i]&#x3D;&#x3D;t)
                     return 1;
+                q.push(ed[i]);
             &#125;
         &#125;
     &#125;
     return 0;
 &#125;
-ll dfs(int u,ll mf)&#x2F;&#x2F;多路增广
+ll dfs(int u,int mf)
 &#123;
     if(u&#x3D;&#x3D;t)
-        return mf;
+        return (ll)mf;
     ll sum &#x3D; 0;
     for (int i &#x3D; cur[u]; i;i&#x3D;nex[i])
     &#123;
-        cur[u] &#x3D; i;&#x2F;&#x2F;当前弧优化，之前的边已无法流通，不再遍历
-        int v &#x3D; ed[i];
-        if(dep[v]&#x3D;&#x3D;dep[u]+1&amp;&amp;val[i])
+        cur[u] &#x3D; i;
+        if(dep[ed[i]]&#x3D;&#x3D;dep[u]+1&amp;&amp;val[i])
         &#123;
-            ll f &#x3D; dfs(v, min(mf, val[i]));
+            ll f&#x3D;dfs(ed[i], min(mf, val[i]));
+            mf -&#x3D; f;
+            sum +&#x3D; f;
             val[i] -&#x3D; f;
-            val[i ^ 1] +&#x3D; f;&#x2F;&#x2F;更新残留网
-            sum +&#x3D; f;&#x2F;&#x2F;累加u点的流出流量
-            mf -&#x3D; f;&#x2F;&#x2F;更新u点的剩余流量
-            if(!mf)&#x2F;&#x2F;余量优化：u点流量耗尽，结束对u的增广
+            val[i ^ 1] +&#x3D; f;
+            if(!mf)
                 break;
         &#125;
     &#125;
-    if(!sum)&#x2F;&#x2F;残枝优化，sum&#x3D;0 此前路径无法流通可以删除
+    if(!sum)
         dep[u] &#x3D; 0;
     return sum;
 &#125;
-ll dinic()&#x2F;&#x2F;累加可以流通的流量
+ll dinic()
 &#123;
     ll flow &#x3D; 0;
     while(bfs())
     &#123;
-        memcpy(cur, head, (n + 5) * sizeof head[0]);
-        flow +&#x3D; dfs(s, 1e18);
+        memcpy(cur, head, (n +m+ 5) * sizeof head[0]);
+        flow+&#x3D;dfs(s, 1e9);
     &#125;
     return flow;
 &#125;
-void mincut(int u)
-&#123;
-    vis[u] &#x3D; 1;
-    for (int i &#x3D; head[u]; i;i&#x3D;nex[i])
-    &#123;
-        if(!vis[ed[i]]&amp;&amp;val[i])
-            mincut(ed[i]);
-    &#125;
-&#125;
 int main()
 &#123;
-    scanf(&quot;%lld%lld%lld%lld&quot;, &amp;n, &amp;m, &amp;s, &amp;t);
+    scanf(&quot;%d%d%d&quot;, &amp;n, &amp;m, &amp;e);
+    s &#x3D; 0;
+    t &#x3D; n + m + 1;
+    for (int i &#x3D; 1; i &lt;&#x3D; e;++i)
+    &#123;
+        scanf(&quot;%d%d&quot;, &amp;a, &amp;b);
+        add(a, b + n, 1);
+        add(b + n, a, 0);
+    &#125;
+    for (int i &#x3D; 1; i &lt;&#x3D; n;++i)
+    &#123;
+        add(s,  i, 1);
+        add(i, s, 0);
+    &#125;
     for (int i &#x3D; 1; i &lt;&#x3D; m;++i)
     &#123;
-        scanf(&quot;%lld%lld%lld&quot;, &amp;a, &amp;b, &amp;c);
-        add(a, b, c);
-        add(b, a, 0);
+        add(n+i,  t, 1);
+        add(t, n+i, 0);
     &#125;
-    cout &lt;&lt; dinic() &lt;&lt; endl;&#x2F;&#x2F;最大流-最小割
-
-    &#x2F;&#x2F; for (int i &#x3D; 1; i &lt;&#x3D; m;++i)
-    &#x2F;&#x2F; &#123;
-    &#x2F;&#x2F;     scanf(&quot;%lld%lld&quot;, &amp;a, &amp;b);
-    &#x2F;&#x2F;     add(a, b, 1);
-    &#x2F;&#x2F;     add(b, a, 0);
-    &#x2F;&#x2F; &#125;
-    &#x2F;&#x2F; cout &lt;&lt; dinic() &lt;&lt; endl;&#x2F;&#x2F;最小割的最少边数
-
-    mincut(s);
-    vector&lt;int&gt; s_set, t_set;&#x2F;&#x2F;最小割的划分之一
-    for (int i &#x3D; 1; i &lt;&#x3D; n;++i)
-        if(vis[i])
-            s_set.push_back(i);
-        else
-            t_set.push_back(i);
-        &#x2F;&#x2F; system(&quot;pause&quot;);
-        return 0;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+    cout &lt;&lt; dinic() &lt;&lt; endl;
+    &#x2F;&#x2F; system(&quot;pause&quot;);
+    return 0;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
                 
             </div>
             <hr/>
@@ -563,7 +546,7 @@ int main()
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://116-116.github.io/2022/09/13/wang-luo-liu-zui-da-liu-zui-xiao-ge-dinic/">http://116-116.github.io/2022/09/13/wang-luo-liu-zui-da-liu-zui-xiao-ge-dinic/</a>
+                    <a href="http://116-116.github.io/2022/09/13/er-fen-tu-zui-da-pi-pei-dinic/">http://116-116.github.io/2022/09/13/er-fen-tu-zui-da-pi-pei-dinic/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -676,13 +659,13 @@ int main()
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2022/09/13/wang-luo-liu-zui-da-liu-ek/">
+                <a href="/2022/09/13/wang-luo-liu-zui-da-liu-zui-xiao-ge-dinic/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/12.jpg" class="responsive-img" alt="网络流最大流">
+                        <img src="/medias/featureimages/16.jpg" class="responsive-img" alt="网络流最大流-最小割-dinic">
                         
-                        <span class="card-title">网络流最大流</span>
+                        <span class="card-title">网络流最大流-最小割-dinic</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -721,13 +704,13 @@ int main()
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/09/13/er-fen-tu-zui-da-pi-pei-dinic/">
+                <a href="/2022/09/08/lca-tarjan/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="二分图最大匹配-dinic">
+                        <img src="/medias/featureimages/19.jpg" class="responsive-img" alt="lca-tarjan">
                         
-                        <span class="card-title">二分图最大匹配-dinic</span>
+                        <span class="card-title">lca-tarjan</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -738,7 +721,7 @@ int main()
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-09-13
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-09-08
                             </span>
                         <span class="publish-author">
                             
